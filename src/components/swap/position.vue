@@ -1,17 +1,100 @@
-<style lang="less" scoped>
+<style lang="less">
+.main-position {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+  background-color: #1c1d21;
+  color: #ffffff;
+
+  .ivu-form-label-top .ivu-form-item-label {
+    color: #ffffff;
+  }
+
+  .title {
+    position: relative;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #323337;
+    border-bottom: 1px solid #797979;
+    font-size: 11px;
+
+    span {
+      padding: 4px 10px;
+      color: #ffffff;
+      background-color: #525b68;
+    }
+  }
+
+  .ivu-table {
+    background-color: #2d2d31;
+  }
+
+  .ivu-table td {
+    background-color: #1c1d21; //背景色
+    height: 39px;
+    color: #fff; //字体色
+  }
+
+  .ivu-table-row-hover td {
+    background-color: #283d45 !important;
+  }
+
+  .ivu-table-wrapper .ivu-table .ivu-table-header th {
+    color: #ffffffb7;
+    background-color: #2d2d31; //背景色
+    height: 24px;
+    line-height: 15px;
+  }
+
+  .ivu-table-border td,
+  .ivu-table-border th {
+    border: 1px solid #797979;
+  }
+
+  .ivu-table-wrapper-with-border {
+    border: none;
+  }
+
+  .ivu-table:before {
+    background-color: #2d2d31;
+  }
+  .ivu-table:after {
+    background-color: #2d2d31;
+  }
+
+  .main-position-table {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+  }
+
+  .main-position-button {
+    position: static;
+    bottom: 0;
+    left: 0;
+  }
+}
 </style>
 
 <template>
-  <div class="fillcontain">
-      <div class="title">
-          <p>持仓</p>
+  <div class="main-position">
+    <div class="title">
+      <span>持仓</span>
+    </div>
+    <div class="main-position-table">
+      <Table
+        height="240"
+        :columns="currentOrder.columns"
+        :data="currentOrder.rows"
+        :no-data-text="$t('common.nodata')"
+      ></Table>
+      <div class="main-position-button">
+        <Button>Default</Button>
+        <Button>Default</Button>
       </div>
-    <Table
-    height="240"
-    :columns="currentOrder.columns"
-    :data="currentOrder.rows"
-    :no-data-text="$t('common.nodata')"
-  ></Table>
+    </div>
   </div>
 </template>
 
@@ -74,17 +157,17 @@ export default {
           },
         ],
         rows: [
-            {
-                name: '1',
-                time: '2',
-                symbol: '3',
-                type: '4',
-                direction: '5',
-                price: '6',
-                amount: '7',
-                turnover: '8',
-                operate: '9',
-            },
+          {
+            name: "1",
+            time: "2",
+            symbol: "3",
+            type: "4",
+            direction: "5",
+            price: "6",
+            amount: "7",
+            turnover: "8",
+            operate: "9",
+          },
         ],
       },
     };

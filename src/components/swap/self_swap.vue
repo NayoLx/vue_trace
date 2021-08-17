@@ -97,6 +97,7 @@
 
 <script>
 export default {
+  props: ["number"],
   data() {
     let self = this;
     return {

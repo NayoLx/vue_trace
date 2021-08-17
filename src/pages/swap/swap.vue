@@ -14,10 +14,10 @@
         >
       </div>
       <div v-if="selectedOrder === 'self'">
-          <SelfSwap></SelfSwap>
-        </div>
-        <div v-else>
-          <SelfSwapM></SelfSwapM>
+        <SelfSwap></SelfSwap>
+      </div>
+      <div v-else>
+        <SelfSwapM></SelfSwapM>
       </div>
     </div>
     <div class="row">
@@ -52,25 +52,33 @@
         <Icon v-else type="ios-eye-outline" @click="hideAccount()" />
       </div>
     </div>
-    <div style="height: 60%">
+    <div class="row-down" style="height: 60%">
       <div class="row-order">
-        <div class="row-order-item" style="width: 15%">
+        <div class="row-order-item" style="width: 300px">
           <DiskPort></DiskPort>
         </div>
-        <div class="row-order-item" style="width: 30%">
+        <div class="row-order-item" style="width: 700px">
           <Order></Order>
         </div>
-        <div class="row-order-item" style="width: 55%">
+        <div class="row-order-item" style="width: 100%">
           <Entrust></Entrust>
         </div>
       </div>
       <div class="row-order">
-        <div style="width: 50%; overflow-y: scroll; height: 100%">
-          <Position></Position>
-        </div>
-        <div style="width: 50%; overflow-y: scroll; height: 100%">
-          <PositionH></PositionH>
-        </div>
+        <Split v-model="split1">
+          <div
+            slot="left"
+            style="overflow-y: scroll; height: 100%; border: 1px solid #000000"
+          >
+            <Position></Position>
+          </div>
+          <div
+            slot="right"
+            style="overflow-y: scroll; height: 100%; border: 1px solid #000000"
+          >
+            <PositionH></PositionH>
+          </div>
+        </Split>
       </div>
     </div>
   </div>
@@ -97,6 +105,7 @@ export default {
   },
   data() {
     return {
+      split1: 0.5,
       selectedOrder: "self",
       showDetail: true,
       account: "17875865869",
@@ -127,12 +136,10 @@ export default {
 
 <style>
 @import url("//unpkg.com/view-design/dist/styles/iview.css");
-
 </style>
 
 <style lang="less" scoped>
 .swap {
-
   .swap-handler {
     background-color: #192330;
     font-size: 0;
@@ -172,6 +179,8 @@ export default {
   justify-content: flex-start;
   background-color: #323337;
   color: #fff;
+  border-top: 1px solid #797979;
+  border-bottom: 1px solid #797979;
 
   .row-item {
     margin: 0 10px 0 10px;
@@ -196,9 +205,13 @@ export default {
 
   .row-order-item {
     height: 100%;
-    margin: 0 10px;
     overflow-y: scroll;
     overflow-x: hidden;
+    border: 0.5px solid #000000;
+  }
+
+  .row-down {
+    height: 60%;
   }
 }
 </style>

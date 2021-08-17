@@ -1,10 +1,73 @@
-<style lang="less" scoped>
+<style lang="less">
+.main-entrust {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+  background-color: #1c1d21;
+  color: #ffffff;
+
+  .ivu-form-label-top .ivu-form-item-label {
+    color: #ffffff;
+  }
+
+  .title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #323337;
+    border-bottom: 1px solid #797979;
+    font-size: 11px;
+
+    span {
+      padding: 4px 10px;
+      color: #ffffff;
+      background-color: #525b68;
+    }
+  }
+
+  .ivu-table {
+    background-color: #2d2d31;
+  }
+
+  .ivu-table td {
+    background-color: #1c1d21; //背景色
+    height: 39px;
+    color: #fff; //字体色
+  }
+
+  .ivu-table-row-hover td {
+    background-color: #283d45 !important;
+  }
+
+  .ivu-table-wrapper .ivu-table .ivu-table-header th {
+    color: #ffffffb7;
+    background-color: #2d2d31; //背景色
+    height: 24px;
+    line-height: 15px;
+  }
+
+  .ivu-table-border td,
+  .ivu-table-border th {
+    border: 1px solid #797979;
+  }
+
+  .ivu-table-wrapper-with-border {
+    border: none;
+  }
+
+  .ivu-table:before {
+    background-color: #2d2d31;
+  }
+  .ivu-table:after {
+    background-color: #2d2d31;
+  }
+}
 </style>
 
 <template>
-  <div>
+  <div class="main-entrust">
     <div class="title">
-      <p>委托</p>
+      <span>委托</span>
     </div>
     <Table
       height="240"
@@ -23,51 +86,51 @@ export default {
       currentOrder: {
         columns: [
           {
-            title: "Name",
+            title: "报单编号",
             key: "name",
             width: 150,
           },
           {
-            title: self.$t("exchange.time"),
+            title: "合约",
             width: 150,
             key: "time",
           },
           {
-            title: self.$t("exchange.symbol"),
+            title: "买卖",
             width: 150,
             key: "symbol",
           },
           {
-            title: self.$t("exchange.type"),
+            title: "开平",
             width: 150,
           },
           {
-            title: self.$t("exchange.direction"),
+            title: "报单手数",
             width: 150,
             key: "direction",
           },
           {
-            title: self.$t("exchange.price"),
+            title: "报单价格",
             width: 150,
             key: "price",
           },
           {
-            title: self.$t("exchange.num"),
+            title: "未成交手数",
             width: 150,
             key: "amount",
           },
           {
-            title: self.$t("exchange.traded"),
+            title: "卖量成交手数",
             width: 150,
             key: "tradedAmount",
           },
           {
-            title: self.$t("exchange.dealamount"),
+            title: "详细状态",
             width: 150,
             key: "turnover",
           },
           {
-            title: self.$t("exchange.action"),
+            title: "合约",
             key: "operate",
             width: 110,
           },

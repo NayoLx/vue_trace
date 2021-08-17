@@ -8,30 +8,34 @@
     </div>
     <div class="container" v-if="this.type == true">
       <div class="item">
-        <span class="title">卖五</span><span class="value">100000</span
-        ><span class="key">15</span>
+        <span class="item-title">卖五</span
+        ><span class="item-value">100000</span><span class="item-key">15</span>
       </div>
       <div class="item">
-        <span class="title">买一</span><span class="value">100000</span
-        ><span class="key">15</span>
+        <span class="item-title">买一</span
+        ><span class="item-value">100000</span><span class="item-key">15</span>
       </div>
       <div class="item">
-        <span class="title">涨停</span><span class="value">100000</span>
+        <span class="item-title">涨停</span
+        ><span class="item-value">100000</span>
       </div>
       <div class="item">
-        <span class="title">昨收</span><span class="value">100000</span>
+        <span class="item-title">昨收</span
+        ><span class="item-value">100000</span>
       </div>
     </div>
     <div class="container" v-else>
       <div class="item">
-        <span class="title">卖出</span><span class="value">100000</span
-        ><span class="key">2</span>
+        <span class="item-title">卖出</span
+        ><span class="item-value">100000</span><span class="key">2</span>
       </div>
       <div class="item">
-        <span class="title">涨停</span><span class="value">100000</span>
+        <span class="item-title">涨停</span
+        ><span class="item-value">100000</span>
       </div>
       <div class="item">
-        <span class="title">最新</span><span class="value">100000</span>
+        <span class="item-title">最新</span
+        ><span class="item-value">100000</span>
       </div>
     </div>
   </div>
@@ -39,11 +43,19 @@
 
 <style lang="less" scoped>
 .main {
+  height: 100%;
+  overflow-y: scroll;
+  color: #fff;
+  background-color: #1c1d21;
 
   .title {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    background-color: #323337;
+    border-bottom: 1px solid #797979;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .container {
@@ -51,9 +63,26 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      border-bottom: 1px solid #797979;
 
-      .title {
+      .item-title {
+        font-size: 12px;
+      }
 
+      .item-value {
+        font-size: 12px;
+        color: green;
+      }
+
+      .item-value {
+        font-size: 12px;
+        color: red;
+      }
+
+      .item-key {
+        font-size: 12px;
       }
     }
   }
