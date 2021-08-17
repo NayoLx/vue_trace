@@ -7,6 +7,9 @@ Vue.use(Vuex);
 const state = {
     token: '',
     nickName: '',
+    activeNav: '',
+    lang: '',
+    exchangeSkin:'night',
 }
 
 //通过getters获取变量
@@ -31,7 +34,10 @@ const mutations = {
     loginOut(state) {
         state.token = '';
         state.nickName = '';
-    }
+    },
+    navigate(state, nav) {
+        state.activeNav = nav;
+    },
 }
 
 //通过actions触发mutattions里的方法
