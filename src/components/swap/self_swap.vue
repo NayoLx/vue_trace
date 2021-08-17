@@ -31,6 +31,7 @@
   }
 
   .ivu-table-wrapper-with-border {
+    border: none;
   }
 
   .ivu-table:before {
@@ -41,6 +42,7 @@
   }
 
   .self_swap {
+    border: none;
   }
 
   .swap_group {
@@ -52,11 +54,19 @@
       margin: 10px 5px;
       font-size: 12px;
       border: 1px solid #797979;
+    }
 
-      .active {
-        color: #ffffff;
-        background-color: #525b68;
-      }
+    .swap_group_item.active {
+      color: #ffffff;
+      background-color: #174b94c9;
+      border: 1px solid #174b94;
+    }
+
+    .swap_group_item:hover {
+      cursor: pointer;
+      color: #ffffff;
+      background-color: #174b94c9;
+      border: 1px solid #174b94;
     }
   }
 }
@@ -66,10 +76,11 @@
   <div class="self_swap">
     <div class="swap_group">
       <div
+        class="swap_group_item"
         v-for="item in swapGroup"
         v-bind:key="item.id"
+        @click="changeGroup(item.id)"
         :class="{ active: selected === item.id }"
-        class="swap_group_item"
       >
         {{ item.title }}
       </div>
@@ -89,7 +100,7 @@ export default {
   data() {
     let self = this;
     return {
-      selected: 1,
+      selected: "1",
       tableH: 0,
       swapGroup: [
         {
@@ -299,7 +310,9 @@ export default {
   },
   created() {},
   methods: {
-    addSwap() {},
+    changeGroup(val) {
+      this.selected = val;
+    },
     sort() {},
   },
 };
