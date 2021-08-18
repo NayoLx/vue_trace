@@ -115,7 +115,9 @@ export default {
   methods: {
     init() {
       var params = this.$route.params.pair;
+      var getUser = this.$userStore.getters.getUser;
       console.log(params);
+      console.log(getUser);
     },
     handleDragDrop(name, newName, a, b, names) {
       this.tabList.splice(b, 1, ...this.tabList.splice(a, 1, this.tabList[b]));
@@ -138,7 +140,7 @@ export default {
 @import url("//unpkg.com/view-design/dist/styles/iview.css");
 </style>
 
-<style lang="less" scoped>
+<style lang="less">
 .swap {
   .swap-handler {
     background-color: #192330;

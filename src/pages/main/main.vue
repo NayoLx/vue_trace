@@ -10,7 +10,7 @@
           unique-opened
           router
         >
-          <el-menu-item index="/swap/btc_usdt">自选</el-menu-item>
+          <el-menu-item index="/main/btc_usdt">自选</el-menu-item>
           <el-menu-item index="/other/btc_usdt">期货</el-menu-item>
         </el-menu>
         </div>
@@ -22,10 +22,13 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      defaultActive: '/main/btc_usdt',
+    }
+  },
   computed: {
-    defaultActive: function () {
-      return this.$route.path.replace("", "");
-    },
+    
   },
 };
 </script>

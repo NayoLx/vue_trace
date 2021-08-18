@@ -4,6 +4,7 @@ import ElementUI from 'element-ui'
 import vueResource from 'vue-resource';
 import 'element-ui/lib/theme-chalk/index.css'
 import 'jqwidgets-scripts/jqwidgets/styles/jqx.base.css'
+import {storePlugin} from './utils/localStorage.js'
 import store from './store/index.js'
 import VueI18n from "vue-i18n";
 import App from './App.vue'
@@ -19,6 +20,7 @@ Vue.use(ViewUI, { locale });
 Vue.use(VueI18n);
 Vue.use(vueResource);
 Vue.use(ElementUI);
+Vue.use(storePlugin);
 
 Vue.prototype.rootHost = "https://www.bizzan.pro"; //BIZZAN
 Vue.prototype.host = "https://api.bizzan.pro"; //BIZZAN

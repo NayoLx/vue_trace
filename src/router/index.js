@@ -20,7 +20,7 @@ export default new Router({
       name: 'main',
       component: main,
       children: [{
-        path: '/swap/:pair',
+        path: '/main/:pair',
         name: 'SwapPair',
         component: swap,
         meta: {

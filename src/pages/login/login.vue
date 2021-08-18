@@ -4,7 +4,10 @@
       <div class="center_container">
         <section class="form_contianer">
           <div class="manage_tip">
-            <p>管理系统</p>
+            <p>交易系统</p>
+          </div>
+          <div class="welcome-tip">
+            <p>欢迎使用，请登录</p>
           </div>
           <el-form ref="loginForm" :model="user" :rules="rules">
             <el-form-item prop="name">
@@ -21,6 +24,23 @@
                 placeholder="密码"
               ></el-input>
             </el-form-item>
+            <el-select
+              v-model="user.server"
+              placeholder="默认服务器"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in servers"
+                :key="item.server"
+                :label="item.server"
+                :value="item.server"
+              >
+              </el-option>
+            </el-select>
+            <div class="keep-pass">
+              <el-checkbox v-model="isKeep">记住密码</el-checkbox>
+              <a href="javaScript:void(0)">忘记密码？</a>
+            </div>
             <el-form-item>
               <el-button type="primary" @click="login()" class="submit_btn"
                 >登陆</el-button
@@ -34,12 +54,19 @@
 </template>
 
 <script>
+import ServerList from "@/assets/server.json";
 
 export default {
   name: "login",
   data() {
     return {
-      user: {},
+      isKeep: false,
+      servers: [],
+      user: {
+        name: "",
+        password: "",
+        server: "",
+      },
       rules: {
         name: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
         password: [
@@ -50,11 +77,23 @@ export default {
       waitTime: "",
     };
   },
+  created: function () {
+    this.init();
+  },
   methods: {
+    init() {
+      this.servers = ServerList;
+      this.isKeep = this.$session.get("isKeep", this.isKeep);
+      console.log(this.servers);
+    },
+
     login() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.$router.push("main");
+          this.$router.push("/main/btc_usdt");
+          this.user.token = "123";
+          this.$session.set("isKeep", this.isKeep);
+          this.$store.dispatch("login", this.user);
         } else {
           this.showMessage("error", "登录失败，请检查账号密码");
         }
@@ -73,11 +112,30 @@ export default {
 };
 </script>
 
+<style lang="less">
+.el-input__inner {
+  border: none !important;
+  border-bottom: 1px solid #333 !important;
+}
+</style>
+
 <style lang="less" scoped>
 @import "../../style/mixin";
 
-.center_container{
-  width: 370px;
+.keep-pass {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 15px 0;
+}
+
+.welcome-tip {
+  text-align: start;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.center_container {
+  width: 320px;
   height: auto;
   border-radius: 20px;
   background-color: #fff;
@@ -136,7 +194,6 @@ export default {
     background-color: transparent;
     letter-spacing: 2px;
   }
-
 }
 
 .form-fade-enter-active,

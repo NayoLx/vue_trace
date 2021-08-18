@@ -5,35 +5,41 @@ Vue.use(Vuex);
 
 //定义初始变量
 const state = {
-    token: '',
-    nickName: '',
     activeNav: '',
     lang: '',
-    exchangeSkin:'night',
+    exchangeSkin: 'night',
+    user: {
+        name: '',
+        password: '',
+        token: '',
+        server: '',
+    },
+    isKeep: false,
 }
 
 //通过getters获取变量
 const getters = {
-    getToken(state) {
-        return state.token
+    getUser(state) {
+        return state.user
     },
-    getNickName(state) {
-        return state.nickName
+    getIsKeep(state) {
+        return state.isKeep
     }
 }
 
 //通过mutations改变初始变量值
 //改变变量值: this.$store.commit('', val);
 const mutations = {
-    setToken(state, token) {
-        state.token = token
-    },
-    setNickName(state, nickName) {
-        state.nickName = nickName
+    setUser(state, user) {
+        state.user = user
     },
     loginOut(state) {
-        state.token = '';
-        state.nickName = '';
+        state.user = {
+            name: '',
+            password: '',
+            token: '',
+            server: '',
+        };
     },
     navigate(state, nav) {
         state.activeNav = nav;
@@ -44,8 +50,7 @@ const mutations = {
 const actions = {
     login(context, payload) {
         console.log(payload);
-        context.commit('setToken', payload.id);
-        context.commit('setNickName', payload.nickName);
+        context.commit('setUser', payload);
     },
     loginOut(context) {
         context.commit('loginOut');
