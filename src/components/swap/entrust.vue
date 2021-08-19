@@ -102,6 +102,7 @@
 
 <script>
 export default {
+  props: ["user"],
   data() {
     return {
       tableData: [
@@ -216,7 +217,13 @@ export default {
       ],
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
+    init() {
+      console.log(this.user);
+    },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";
     },

@@ -35,8 +35,9 @@
       border: 1px solid #174b94;
     }
   }
-  
-  .el-table td, .el-table th {
+
+  .el-table td,
+  .el-table th {
     padding: 5px 0;
   }
 
@@ -116,7 +117,7 @@
 import Sortable from "sortablejs";
 
 export default {
-  props: ["user"],
+  props: ['user'],
   data() {
     return {
       selected: "1",
@@ -242,10 +243,16 @@ export default {
       ],
     };
   },
+  created() {
+    this.init();
+  },
   mounted() {
     this.rowDrop();
   },
   methods: {
+    init() {
+      console.log(this.user);
+    },
     changeGroup(val) {
       this.selected = val;
     },

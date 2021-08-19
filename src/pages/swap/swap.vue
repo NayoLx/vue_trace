@@ -14,10 +14,10 @@
         >
       </div>
       <div v-if="selectedOrder === 'self'">
-        <SelfSwap></SelfSwap>
+        <SelfSwap :user="account"></SelfSwap>
       </div>
       <div v-else>
-        <SelfSwapM></SelfSwapM>
+        <SelfSwapM :user="account"></SelfSwapM>
       </div>
     </div>
     <div class="row">
@@ -55,13 +55,13 @@
     <div class="row-down" style="height: 60%">
       <div class="row-order">
         <div class="row-order-item" style="width: 300px">
-          <DiskPort></DiskPort>
+          <DiskPort :user="account"></DiskPort>
         </div>
         <div class="row-order-item" style="width: 700px">
-          <Order></Order>
+          <Order :user="account"></Order>
         </div>
         <div class="row-order-item" style="width: 100%">
-          <Entrust></Entrust>
+          <Entrust :user="account"></Entrust>
         </div>
       </div>
       <div class="row-order">
@@ -140,7 +140,7 @@ export default {
 @import url("//unpkg.com/view-design/dist/styles/iview.css");
 </style>
 
-<style lang="less">
+<style lang="less" scoped>
 .swap {
   .swap-handler {
     background-color: #192330;

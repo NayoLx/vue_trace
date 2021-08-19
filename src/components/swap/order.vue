@@ -54,7 +54,7 @@
           <el-input-number
             v-model="form.price"
             controls-position="right"
-            step="100"
+            :step="100"
             style="width: 120px"
             :min="1"
             :max="1000000"
@@ -236,9 +236,11 @@
 
 <script>
 export default {
+  props: ["user"],
   data() {
     return {
       isReadOnly: false,
+      loading: false,
       options: [],
       sides: ["1", "2"],
       tifs: ["1", "2"],
@@ -309,14 +311,23 @@ export default {
       ],
     };
   },
+  created() {
+    this.init();
+  },
   mounted() {
     this.list = this.states.map((item) => {
       return { value: `value:${item}`, label: `label:${item}` };
     });
   },
   methods: {
+    init() {
+      console.log(this.user);
+    },
     changeReadOnly() {
       this.isReadOnly = !this.isReadOnly;
+    },
+    onSubmit() {
+      
     },
     remoteMethod(query) {
       if (query !== "") {
