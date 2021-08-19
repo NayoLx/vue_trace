@@ -54,11 +54,13 @@
           <el-input-number
             v-model="form.price"
             controls-position="right"
+            step="100"
+            style="width: 120px"
             :min="1"
             :max="1000000"
           ></el-input-number>
         </div>
-        <div class="form-row-item">
+        <div class="form-row-item" style="margin: 0px 10px">
           <div class="form-row-item-title-f">
             <span>方向</span>
           </div>
@@ -102,7 +104,7 @@
             </el-option>
           </el-select>
         </div>
-        <div class="form-row-item">
+        <div class="form-row-item" style="margin: 0px 10px">
           <div class="form-row-item-title-f">
             <span>类型</span>
           </div>
@@ -151,8 +153,49 @@
   background-color: #1c1d21;
   color: #ffffff;
 
-  .ivu-form-label-top .ivu-form-item-label {
-    color: #ffffff;
+  .el-input--suffix .el-input__inner {
+    background-color: #1c1d21;
+    color: #fff !important;
+    height: 30px;
+    border: 1px solid #797979 !important;
+  }
+
+  .el-input-number.is-controls-right .el-input__inner {
+    background-color: #1c1d21;
+    color: #fff !important;
+    height: 30px;
+    border: 1px solid #797979 !important;
+  }
+
+  .el-input-number__decrease,
+  .el-input-number__increase {
+    border: none;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__decrease,
+  .el-input-number.is-controls-right .el-input-number__increase {
+    line-height: 15px;
+  }
+
+  .el-input-number {
+    line-height: 30px;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__decrease {
+    background-color: #1c1d21;
+    color: #fff !important;
+    border: none;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__increase {
+    background-color: #1c1d21;
+    color: #fff !important;
+    border: none;
+  }
+
+  .el-input__icon {
+    width: 25px;
+    line-height: 30px;
   }
 
   .title {
@@ -162,6 +205,9 @@
     background-color: #323337;
     border-bottom: 1px solid #797979;
     font-size: 11px;
+    position: sticky;
+    z-index: 10;
+    top: 0;
 
     span {
       padding: 4px 10px;

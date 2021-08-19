@@ -125,7 +125,7 @@ export default {
 .keep-pass {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0 15px 0;
+  margin: 20px 0 35px 0;
 }
 
 .welcome-tip {
@@ -187,9 +187,9 @@ export default {
     border-radius: 30px;
     margin-top: 15px;
     width: 100%;
-    height: 50px;
-    font-size: 19px;
-    background-image: linear-gradient(#c1d6ea, #8798a9);
+    height: 40px;
+    font-size: 16px;
+    background-image: linear-gradient(#1986f3, #1986f3);
     border: 1px solid #fff;
     background-color: transparent;
     letter-spacing: 2px;
