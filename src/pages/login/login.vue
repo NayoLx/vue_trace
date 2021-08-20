@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import Mqtt from "@/utils/mqtt_helper";
 import ServerList from "@/assets/server.json";
 
 export default {
@@ -88,12 +89,23 @@ export default {
     },
 
     login() {
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
-          this.$router.push("/main/btc_usdt");
-          this.user.token = "123";
-          this.$session.set("isKeep", this.isKeep);
-          this.$store.dispatch("login", this.user);
+          await Mqtt.setClient("17875865869");
+          await Mqtt.init();
+          const loading = this.$loading({
+            lock: true,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+          });
+          setTimeout(() => {
+            loading.close();
+            this.$router.push("/main/btc_usdt");
+            this.user.token = "123";
+            this.$session.set("isKeep", this.isKeep);
+            this.$store.dispatch("login", this.user);
+          }, 2000);
         } else {
           this.showMessage("error", "登录失败，请检查账号密码");
         }

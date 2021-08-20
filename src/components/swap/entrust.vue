@@ -105,6 +105,16 @@ export default {
   props: ["user"],
   data() {
     return {
+      subscription: {
+        topic: "topic/test2",
+        qos: 0,
+      },
+      publish: {
+        topic: "topic/test2",
+        qos: 0,
+        payload: '{ "msg": "Hello, I am browser." }',
+      },
+      receiveNews: "",
       tableData: [
         {
           id: "1",
@@ -178,42 +188,6 @@ export default {
           turnover: "6",
           operate: "6",
         },
-        {
-          id: "7",
-          time: "7",
-          symbol: "7",
-          type: "7",
-          direction: "7",
-          price: "7",
-          amount: "7",
-          tradedAmount: "7",
-          turnover: "7",
-          operate: "7",
-        },
-        {
-          id: "8",
-          time: "8",
-          symbol: "8",
-          type: "8",
-          direction: "8",
-          price: "8",
-          amount: "8",
-          tradedAmount: "8",
-          turnover: "8",
-          operate: "8",
-        },
-        {
-          id: "9",
-          time: "9",
-          symbol: "9",
-          type: "9",
-          direction: "9",
-          price: "9",
-          amount: "9",
-          tradedAmount: "9",
-          turnover: "9",
-          operate: "9",
-        },
       ],
     };
   },
@@ -223,10 +197,38 @@ export default {
   methods: {
     init() {
       console.log(this.user);
+      this.doSubscribe();
     },
+
+    doSubscribe() {
+      const { topic, qos } = this.subscription;
+      if (this.$client == null) {
+        this.$router.push("/");
+        return;
+      }
+      this.$client.subscribe(topic, qos, (error, res) => {
+        if (error) {
+          console.log("Subscribe to topics error", error);
+          return;
+        }
+        this.subscribeSuccess = true;
+        console.log("Subscribe to topics res", res);
+      });
+      this.$client.on("message", (messageTopic, message) => {
+        if (messageTopic == topic) {
+          const y = JSON.parse(message);
+          this.tableData.unshift(y);
+        }
+        console.log(`Received message ${message} from topic ${messageTopic}`);
+      });
+    },
+
+    checkData() {},
+
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";
     },
+
     rowStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #1c1d21";
     },
