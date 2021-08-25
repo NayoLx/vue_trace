@@ -109,11 +109,6 @@ export default {
         topic: "topic/test2",
         qos: 0,
       },
-      publish: {
-        topic: "topic/test2",
-        qos: 0,
-        payload: '{ "msg": "Hello, I am browser." }',
-      },
       receiveNews: "",
       tableData: [
         {
@@ -222,8 +217,6 @@ export default {
         console.log(`Received message ${message} from topic ${messageTopic}`);
       });
     },
-
-    checkData() {},
 
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";

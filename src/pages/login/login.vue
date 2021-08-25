@@ -125,9 +125,11 @@ export default {
 </script>
 
 <style lang="less">
-.el-input__inner {
-  border: none !important;
-  border-bottom: 1px solid #333 !important;
+.login {
+  .el-input__inner {
+    border: none !important;
+    border-bottom: 1px solid #333 !important;
+  }
 }
 </style>
 

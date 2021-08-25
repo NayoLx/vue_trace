@@ -64,6 +64,8 @@
       "no-unused-vars": 0,
       "no-redeclare": 0,
       "no-undef": 0,
+      "no-useless-escape": 0,
+      "no-extra-semi": 0,
       "no-dupe-keys": 0,
       "x-invalid-end-tag": 0,
       "no-irregular-whitespace": 0

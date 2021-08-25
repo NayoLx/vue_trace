@@ -9,6 +9,7 @@ import store from './store/index.js'
 import VueI18n from "vue-i18n";
 import App from './App.vue'
 import api from './config/api';
+import './utils/drag.js';
 
 import ViewUI from 'view-design';
 import locale from 'view-design/dist/locale/zh-CN';

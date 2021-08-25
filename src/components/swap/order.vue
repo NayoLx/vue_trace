@@ -316,7 +316,7 @@ export default {
   },
   mounted() {
     this.list = this.states.map((item) => {
-      return { value: `value:${item}`, label: `label:${item}` };
+      return { value: `${item}`, label: `${item}` };
     });
   },
   methods: {
@@ -327,7 +327,7 @@ export default {
       this.isReadOnly = !this.isReadOnly;
     },
     onSubmit() {
-      
+      console.log(this.form);
     },
     remoteMethod(query) {
       if (query !== "") {
