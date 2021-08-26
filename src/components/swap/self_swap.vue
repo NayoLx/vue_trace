@@ -49,6 +49,12 @@
   .el-table--enable-row-transition .el-table__body td {
     border: 1px solid #797979;
   }
+
+  .self-swap-table {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 300px;
+  }
 }
 </style>
 
@@ -97,54 +103,58 @@
         {{ item.title }}
       </div>
     </div>
-    <el-table
-      max-height="300"
-      height="300"
-      row-key="id"
-      :data="tableData"
-      @row-contextmenu="rightClick"
-      style="width: 100%; color: #fff"
-      :header-cell-style="cellStyle"
-      :cell-style="rowStyle"
-    >
-      <el-table-column width="50" align="center">
-        <template slot="header">
-          <el-dropdown trigger="click" style="color: #fff">
-            <i class="el-icon-s-tools"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addSwap()"
-                >添加合约</el-dropdown-item
-              >
-              <el-dropdown-item>标记排序</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.$index }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="合约" prop="time" width="150"> </el-table-column>
-      <el-table-column label="合约名" prop="symbol" width="150">
-      </el-table-column>
-      <el-table-column label="最新价" prop="type" width="150">
-      </el-table-column>
-      <el-table-column label="涨跌" prop="direction" width="150">
-      </el-table-column>
-      <el-table-column label="买价" prop="price" width="150"> </el-table-column>
-      <el-table-column label="卖价" prop="amount" width="150">
-      </el-table-column>
-      <el-table-column label="买量" prop="turnover" width="150">
-      </el-table-column>
-      <el-table-column label="卖量" prop="tradedAmount" width="150">
-      </el-table-column>
-      <el-table-column label="总量" prop="operate"> </el-table-column>
-      <el-table-column label="持仓量" prop="tradedAmount" width="150">
-      </el-table-column>
-      <el-table-column label="涨停价" prop="tradedAmount" width="150">
-      </el-table-column>
-      <el-table-column label="涨跌价" prop="tradedAmount" width="150">
-      </el-table-column>
-    </el-table>
+    <div class="self-swap-table">
+      <el-table
+        row-key="id"
+        :data="tableData"
+        @row-contextmenu="rightClick"
+        style="width: 100%; color: #fff"
+        :header-cell-style="cellStyle"
+        :cell-style="rowStyle"
+      >
+        <el-table-column width="50" align="center">
+          <template slot="header">
+            <el-dropdown trigger="click" style="color: #fff">
+              <i class="el-icon-s-tools"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="addSwap()"
+                  >添加合约</el-dropdown-item
+                >
+                <el-dropdown-item @click.native="setSort()"
+                  >标记排序</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.$index }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="合约" prop="time" width="150">
+        </el-table-column>
+        <el-table-column label="合约名" prop="symbol" width="150">
+        </el-table-column>
+        <el-table-column label="最新价" prop="type" width="150">
+        </el-table-column>
+        <el-table-column label="涨跌" prop="direction" width="150">
+        </el-table-column>
+        <el-table-column label="买价" prop="price" width="150">
+        </el-table-column>
+        <el-table-column label="卖价" prop="amount" width="150">
+        </el-table-column>
+        <el-table-column label="买量" prop="turnover" width="150">
+        </el-table-column>
+        <el-table-column label="卖量" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="总量" prop="operate"> </el-table-column>
+        <el-table-column label="持仓量" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="涨停价" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="涨跌价" prop="tradedAmount" width="150">
+        </el-table-column>
+      </el-table>
+    </div>
 
     <div id="contextmenu" v-show="menuVisible" class="menu">
       <el-cascader-panel
@@ -190,6 +200,7 @@ export default {
   },
   data() {
     return {
+      canSort: true,
       cascaderValue: "",
       options: [
         {
@@ -344,6 +355,30 @@ export default {
           turnover: "9",
           operate: "9",
         },
+        {
+          id: "9",
+          time: "9",
+          symbol: "9",
+          type: "9",
+          direction: "9",
+          price: "9",
+          amount: "9",
+          tradedAmount: "9",
+          turnover: "9",
+          operate: "9",
+        },
+        {
+          id: "9",
+          time: "9",
+          symbol: "9",
+          type: "9",
+          direction: "9",
+          price: "9",
+          amount: "9",
+          tradedAmount: "9",
+          turnover: "9",
+          operate: "9",
+        },
       ],
       swapGroup: [
         {
@@ -364,6 +399,10 @@ export default {
     this.rowDrop();
   },
   methods: {
+    setSort() {
+      console.log("setSort");
+      this.canSort = !this.canSort;
+    },
     init() {
       console.log(this.user);
     },
@@ -415,14 +454,16 @@ export default {
       document.removeEventListener("click", this.foo); // 关掉监听，
     },
     rowDrop() {
-      const tbody = document.querySelector(".el-table__body-wrapper tbody");
-      const _this = this;
-      Sortable.create(tbody, {
-        onEnd({ newIndex, oldIndex }) {
-          const currRow = _this.tableData.splice(oldIndex, 1)[0];
-          _this.tableData.splice(newIndex, 0, currRow);
-        },
-      });
+      if (this.canSort == true) {
+        const tbody = document.querySelector(".el-table__body-wrapper tbody");
+        const _this = this;
+        Sortable.create(tbody, {
+          onEnd({ newIndex, oldIndex }) {
+            const currRow = _this.tableData.splice(oldIndex, 1)[0];
+            _this.tableData.splice(newIndex, 0, currRow);
+          },
+        });
+      }
     },
   },
 };

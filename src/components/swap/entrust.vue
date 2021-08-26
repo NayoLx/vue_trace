@@ -73,30 +73,32 @@
       <el-button size="mini" style="main-entrust-btn-item">全撤</el-button>
     </div>
 
-    <el-table
-      height="300"
-      :data="tableData"
-      style="width: 100%; background-color: #1c1d21; color: #fff"
-      :header-cell-style="cellStyle"
-      :cell-style="rowStyle"
-    >
-      <el-table-column label="报单编号" prop="time" width="150">
-      </el-table-column>
-      <el-table-column label="合约" prop="symbol" width="150">
-      </el-table-column>
-      <el-table-column label="买卖" prop="type" width="150"> </el-table-column>
-      <el-table-column label="开平" prop="direction" width="150">
-      </el-table-column>
-      <el-table-column label="报单手数" prop="price" width="150">
-      </el-table-column>
-      <el-table-column label="报单价格" prop="amount" width="150">
-      </el-table-column>
-      <el-table-column label="未成交手数" prop="turnover" width="150">
-      </el-table-column>
-      <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
-      </el-table-column>
-      <el-table-column label="详细状态" prop="operate"> </el-table-column>
-    </el-table>
+    <div style="overflow-y: scroll; overflow-x: hidden; height: 300px">
+      <el-table
+        :data="tableData"
+        style="width: 100%; background-color: #1c1d21; color: #fff"
+        :header-cell-style="cellStyle"
+        :cell-style="rowStyle"
+      >
+        <el-table-column label="报单编号" prop="time" width="150">
+        </el-table-column>
+        <el-table-column label="合约" prop="symbol" width="150">
+        </el-table-column>
+        <el-table-column label="买卖" prop="type" width="150">
+        </el-table-column>
+        <el-table-column label="开平" prop="direction" width="150">
+        </el-table-column>
+        <el-table-column label="报单手数" prop="price" width="150">
+        </el-table-column>
+        <el-table-column label="报单价格" prop="amount" width="150">
+        </el-table-column>
+        <el-table-column label="未成交手数" prop="turnover" width="150">
+        </el-table-column>
+        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="详细状态" prop="operate"> </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 

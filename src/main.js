@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import router from './router'
+import axios from 'axios'
 import ElementUI from 'element-ui'
+import VueI18n from 'vue-i18n';
 import vueResource from 'vue-resource';
 import 'element-ui/lib/theme-chalk/index.css'
 import 'jqwidgets-scripts/jqwidgets/styles/jqx.base.css'
 import {storePlugin} from './utils/localStorage.js'
 import store from './store/index.js'
-import VueI18n from "vue-i18n";
 import App from './App.vue'
 import api from './config/api';
 import './utils/drag.js';
@@ -18,31 +19,21 @@ var moment = require('moment');
 var momentTimezone = require('moment-timezone');
 
 Vue.use(ViewUI, { locale });
-Vue.use(VueI18n);
 Vue.use(vueResource);
+Vue.use(VueI18n);
 Vue.use(ElementUI);
 Vue.use(storePlugin);
 
-Vue.prototype.rootHost = "https://www.bizzan.pro"; //BIZZAN
-Vue.prototype.host = "https://api.bizzan.pro"; //BIZZAN
 Vue.prototype.api = api;
-
-Vue.http.options.credentials = true;
-Vue.http.options.emulateJSON = true;
-Vue.http.options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    'Content-Type': 'application/json;charset=utf-8'
-};
 
 Vue.config.productionTip = false;
 Vue.prototype.moment = moment;
+Vue.prototype.$axios = axios;
 
 const i18n = new VueI18n({
   locale: 'zh_CN',
   messages: {
       'zh_CN': require('./assets/lang/cn.js'),
-      'en_US': require('./assets/lang/en.js'),
-      'zh_HK': require('./assets/lang/hk.js'),
   },
   silentTranslationWarn: true
 });
@@ -55,68 +46,6 @@ Vue.filter('dateFormat', function(tick) {
   return moment(tick).format("YYYY-MM-DD HH:mm:ss");
 });
 
-Vue.prototype.getTimezone4K = function(){
-  var curlang = this.$store.getters.lang;
-  if(curlang=="en_US"){
-    return "America/Los_Angeles";
-  }
-  if(curlang=="ja_JP"){
-    return "Asia/Tokyo";
-  }
-  if(curlang=="ko_KR"){
-    return "Asia/Seoul";
-  }
-  if(curlang=="de_DE"){
-    return "Europe/Berlin";
-  }
-  if(curlang=="fr_FR"){
-    return "Europe/Paris";
-  }
-  if(curlang=="it_IT"){
-    return "Europe/Rome";
-  }
-  if(curlang=="es_ES"){
-    return "Europe/Madrid";
-  }
-  if(curlang=="zh_HK"){
-    return "Asia/Hong_Kong";
-  }
-  if(curlang=="zh_CN"){
-    return "Asia/Shanghai";
-  }
-  return curlang;
-};
-Vue.prototype.getLang4K = function(){
-  var curlang = this.$store.getters.lang;
-  if(curlang=="en_US"){
-    return "en";
-  }
-  if(curlang=="ja_JP"){
-    return "ja";
-  }
-  if(curlang=="ko_KR"){
-    return "ko";
-  }
-  if(curlang=="de_DE"){
-    return "de_DE";
-  }
-  if(curlang=="fr_FR"){
-    return "fr";
-  }
-  if(curlang=="it_IT"){
-    return "it";
-  }
-  if(curlang=="es_ES"){
-    return "es";
-  }
-  if(curlang=="zh_HK"){
-    return "zh_TW";
-  }
-  if(curlang=="zh_CN"){
-    return "zh";
-  }
-  return curlang;
-};
 Vue.prototype.timeFormat=function(tick) {
     return momentTimezone(tick).tz(this.getTimezone4K()).format("HH:mm:ss");
   };

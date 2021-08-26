@@ -7,7 +7,10 @@
       <div class="form-row">
         <div class="form-row-item">
           <div class="form-row-item-title-f">
-            <div><span>合约</span><Icon type="md-search" /></div>
+            <div>
+              <span>合约</span
+              ><Icon type="md-search" @click.native="swapVisible = true" />
+            </div>
             <Icon
               :type="isReadOnly == true ? 'md-lock' : 'md-unlock'"
               size="17"
@@ -142,10 +145,84 @@
     <div>
       <div>合约名称 品种 每手x吨 保证金xxx.x元 交易所</div>
     </div>
+
+    <el-dialog
+      title="选择合约"
+      :visible.sync="swapVisible"
+      width="40%"
+      height="500"
+      v-dialogDrag
+    >
+      <template>
+        <div style="choose-swap">
+          <el-row>
+            <el-col :span="6">
+              <div style="choose-swap-tree">
+                <p>市场/品种</p>
+                <div style="choose-swap-tree-list">
+                  <el-tree :data="swap_tree" :props="defaultProps" accordion>
+                  </el-tree>
+                </div>
+              </div>
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <p>合约</p>
+                <el-table :data="tableData" style="width: 100%" height="250px">
+                  <el-table-column prop="code" label="交易代码">
+                  </el-table-column>
+                  <el-table-column prop="head" label="默认下单手数">
+                  </el-table-column>
+                  <el-table-column prop="code" label="交易代码">
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-col>
+          </el-row>
+          <div class="choose-swap-footer">
+            <p>市场/品种</p>
+            <div>
+              <p>合约名称 每手xx吨 交易所</p>
+              <p>报价单位：元（人民币）/吨</p>
+            </div>
+            <div>
+              <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
+                >确定</el-button
+              >
+              <el-button size="mini">取消</el-button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </el-dialog>
+
+    <el-dialog title="操作确认"
+      :visible.sync="submitVisible"
+      width="30%"
+      v-dialogDrag>
+      <template>
+        <div>
+          <p>确定下单 吗？</p>
+          <div></div>
+          <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
+                >确定</el-button
+              >
+              <el-button size="mini">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="less">
+.choose-swap {
+  width: 100%;
+  min-height: 500px;
+
+  .choose-swap-tree {
+    height: 200px;
+  }
+}
 .main-order {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -239,6 +316,46 @@ export default {
   props: ["user"],
   data() {
     return {
+      tableData: [],
+      swap_tree: [
+        {
+          label: "一级 1",
+          children: [
+            {
+              label: "二级 1-1",
+            },
+          ],
+        },
+        {
+          label: "一级 2",
+          children: [
+            {
+              label: "二级 2-1",
+            },
+            {
+              label: "二级 2-2",
+            },
+          ],
+        },
+        {
+          label: "一级 3",
+          children: [
+            {
+              label: "二级 3-1",
+            },
+            {
+              label: "二级 3-2",
+            },
+          ],
+        },
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
+      //弹窗
+      submitVisible: false,
+      swapVisible: false,
       isReadOnly: false,
       loading: false,
       options: [],
@@ -327,6 +444,10 @@ export default {
       this.isReadOnly = !this.isReadOnly;
     },
     onSubmit() {
+      this.submitVisible = true;
+      console.log(this.form);
+    },
+    onChooseSubmit() {
       console.log(this.form);
     },
     remoteMethod(query) {

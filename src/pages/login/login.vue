@@ -56,6 +56,8 @@
 <script>
 import Mqtt from "@/utils/mqtt_helper";
 import ServerList from "@/assets/server.json";
+import { stringify } from "@/utils/utils";
+import web from "@/config/web";
 
 export default {
   name: "login",
@@ -64,8 +66,8 @@ export default {
       isKeep: false,
       servers: [],
       user: {
-        name: "",
-        password: "",
+        name: "zhaobin",
+        password: "123456",
         server: "",
       },
       rules: {
@@ -89,23 +91,47 @@ export default {
     },
 
     login() {
-      this.$refs.loginForm.validate(async (valid) => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          await Mqtt.setClient("17875865869");
-          await Mqtt.init();
-          const loading = this.$loading({
-            lock: true,
-            text: "Loading",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)",
-          });
-          setTimeout(() => {
-            loading.close();
-            this.$router.push("/main/btc_usdt");
-            this.user.token = "123";
-            this.$session.set("isKeep", this.isKeep);
-            this.$store.dispatch("login", this.user);
-          }, 2000);
+          web
+            .request({
+              url: "/api/fospot/counter/api/login",
+              method: "post",
+              data: {
+                username: this.user.name,
+                password: this.user.password,
+              },
+              transformRequest: [
+                function (data) {
+                  return stringify(data);
+                },
+              ],
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then(async (res) => {
+              console.log(res);
+              await Mqtt.setClient("17875865869");
+              await Mqtt.init();
+              const loading = this.$loading({
+                lock: true,
+                text: "Loading",
+                spinner: "el-icon-loading",
+                background: "rgba(0, 0, 0, 0.7)",
+              });
+              setTimeout(() => {
+                loading.close();
+                this.$router.push("/main/btc_usdt");
+                this.user.token = "123";
+                this.$session.set("isKeep", this.isKeep);
+                this.$store.dispatch("login", this.user);
+              }, 2000);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
           this.showMessage("error", "登录失败，请检查账号密码");
         }

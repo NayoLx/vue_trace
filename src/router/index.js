@@ -34,9 +34,6 @@ export default new Router({
           keepAlive: true,
         },
       }]
-    },{
-      path: '/self_swap',
-      component: selfSwap,
     }
   ],
 })
