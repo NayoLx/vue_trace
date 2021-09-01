@@ -9,7 +9,7 @@ import { Loading, Message } from 'element-ui';
 const getBaseUrl = (env) => {
     let base = {
         production: '/',
-        development: 'http://localhost:8080',
+        development: 'http://localhost:8081',
         test: '',
     }[env];
     if (!base) {
@@ -20,7 +20,7 @@ const getBaseUrl = (env) => {
 
 class web {
     constructor() {
-        this.baseUrl = '/api';
+        this.baseUrl = '';
         this.timeout = 10000;
         this.withCredentials = true;
     }
@@ -42,7 +42,7 @@ class web {
         }, (err) => {
             loading.close();
             if (err.response) { // 响应错误码处理
-                switch (err.response.status) {
+                switch (err.response.code) {
                     case '401':
                         Message({
                             type: 'error',
@@ -81,7 +81,7 @@ class web {
         const instance = axios.create();
         const config = {
             ...options,
-            baseUrl: 'http://172.31.41.83:8080/',
+            baseUrl: this.baseUrl,
             timeout: this.timeout,
             withCredentials: this.withCredentials,
         }

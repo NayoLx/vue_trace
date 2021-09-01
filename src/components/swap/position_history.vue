@@ -1,7 +1,5 @@
 <style lang="less">
 .main-position-h {
-  overflow-y: scroll;
-  overflow-x: hidden;
   height: 100%;
   background-color: #1c1d21;
   color: #ffffff;

@@ -44,7 +44,6 @@
 <style lang="less" scoped>
 .main {
   height: 100%;
-  overflow-y: scroll;
   color: #fff;
   background-color: #1c1d21;
 

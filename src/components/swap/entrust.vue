@@ -1,5 +1,6 @@
 <style lang="less">
 .main-entrust {
+  height: 100%;
   background-color: #1c1d21;
   color: #ffffff;
 
@@ -24,6 +25,10 @@
       color: #ffffff;
       background-color: #525b68;
     }
+  }
+
+  .el-scrollbar__bar {
+    opacity: 1;
   }
 
   .el-table td,
@@ -72,11 +77,10 @@
       <el-button size="mini" style="main-entrust-btn-item">撤单</el-button>
       <el-button size="mini" style="main-entrust-btn-item">全撤</el-button>
     </div>
-
-    <div style="overflow-y: scroll; overflow-x: hidden; height: 300px">
-      <el-table
+    <el-table
+        height="200"
         :data="tableData"
-        style="width: 100%; background-color: #1c1d21; color: #fff"
+        style="background-color: #1c1d21; color: #fff"
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
       >
@@ -98,7 +102,6 @@
         </el-table-column>
         <el-table-column label="详细状态" prop="operate"> </el-table-column>
       </el-table>
-    </div>
   </div>
 </template>
 
@@ -175,6 +178,30 @@ export default {
         },
         {
           id: "6",
+          time: "6",
+          symbol: "6",
+          type: "6",
+          direction: "6",
+          price: "6",
+          amount: "6",
+          tradedAmount: "6",
+          turnover: "6",
+          operate: "6",
+        },
+        {
+          id: "7",
+          time: "6",
+          symbol: "6",
+          type: "6",
+          direction: "6",
+          price: "6",
+          amount: "6",
+          tradedAmount: "6",
+          turnover: "6",
+          operate: "6",
+        },
+        {
+          id: "8",
           time: "6",
           symbol: "6",
           type: "6",

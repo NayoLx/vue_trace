@@ -20,7 +20,7 @@ export function setClient(user) {
     connect.clientId = user;
 }
 
-export function init() {
+export async function init() {
     const client = mqtt.connect(connectUrl, options);
 
     client.on("connect", () => {

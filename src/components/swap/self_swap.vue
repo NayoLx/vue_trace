@@ -50,10 +50,37 @@
     border: 1px solid #797979;
   }
 
+  .el-table--scrollable-x .el-table__body-wrapper {
+    background-color: #2d2d31;
+  }
+
+  .el-table::before {
+    color: #2d2d31;
+  }
+
   .self-swap-table {
-    overflow-y: scroll;
-    overflow-x: hidden;
     height: 300px;
+  }
+
+  .el-dialog {
+    background-color: #2d2d31;
+  }
+
+  .el-dialog__title {
+    color: #ffffff;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #ffffff;
+  }
+
+  .el-dialog__header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #797979;
+  }
+
+  .el-dialog__headerbtn {
+    top: 15px;
   }
 }
 </style>
@@ -93,15 +120,19 @@
 <template>
   <div class="self_swap" @click="foo()">
     <div class="swap_group">
-      <div
-        class="swap_group_item"
-        v-for="item in swapGroup"
-        v-bind:key="item.id"
-        @click="changeGroup(item.id)"
-        :class="{ active: selected === item.id }"
-      >
-        {{ item.title }}
-      </div>
+      <vuedraggable v-model="swapGroup" :v-bind="updated()">
+        <transition-group style="display:flex">
+          <div
+            class="swap_group_item"
+            v-for="item in swapGroup"
+            v-bind:key="item.groupId"
+            @click="changeGroup(item.groupId)"
+            :class="{ active: selected === item.groupId }"
+          >
+            {{ item.groupName }}
+          </div>
+        </transition-group>
+      </vuedraggable>
     </div>
     <div class="self-swap-table">
       <el-table
@@ -168,35 +199,27 @@
     </div>
 
     <el-dialog
-      title="选择自选合约"
+      title="添加自选合约"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="60%"
       v-dialogDrag
     >
-      <AddSwap></AddSwap>
-    </el-dialog>
-
-    <el-dialog
-      title="合约组管理"
-      :visible.sync="groupVisible"
-      width="40%"
-      v-dialogDrag
-    >
-      <GroupManage></GroupManage>
+      <AddSwap :groundId="selected"></AddSwap>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import vuedraggable from "vuedraggable";
 import Sortable from "sortablejs";
 import AddSwap from "./add_swap.vue";
-import GroupManage from "./group_manage.vue";
+import web from "@/config/web";
 
 export default {
   props: ["user"],
   components: {
     AddSwap,
-    GroupManage,
+    vuedraggable,
   },
   data() {
     return {
@@ -231,11 +254,7 @@ export default {
         },
         {
           value: "add",
-          label: "新增自选",
-        },
-        {
-          value: "manage",
-          label: "合约组管理",
+          label: "设置合约",
         },
         {
           value: "delete",
@@ -243,153 +262,10 @@ export default {
         },
       ],
       dialogVisible: false,
-      groupVisible: false,
       menuVisible: false,
-      selected: "1",
-      tableData: [
-        {
-          id: "1",
-          time: "1",
-          symbol: "1",
-          type: "1",
-          direction: "1",
-          price: "1",
-          amount: "1",
-          turnover: "1",
-          tradedAmount: "1",
-          operate: "1",
-        },
-        {
-          id: "2",
-          time: "2",
-          symbol: "2",
-          type: "2",
-          direction: "2",
-          price: "2",
-          amount: "2",
-          tradedAmount: "2",
-          turnover: "2",
-          operate: "2",
-        },
-        {
-          id: "3",
-          time: "3",
-          symbol: "3",
-          type: "3",
-          direction: "3",
-          price: "3",
-          amount: "3",
-          tradedAmount: "3",
-          turnover: "3",
-          operate: "3",
-        },
-        {
-          id: "4",
-          time: "4",
-          symbol: "4",
-          type: "4",
-          direction: "4",
-          price: "4",
-          amount: "4",
-          tradedAmount: "4",
-          turnover: "4",
-          operate: "4",
-        },
-        {
-          id: "5",
-          time: "5",
-          symbol: "5",
-          type: "5",
-          direction: "5",
-          price: "5",
-          amount: "5",
-          tradedAmount: "5",
-          turnover: "5",
-          operate: "5",
-        },
-        {
-          id: "6",
-          time: "6",
-          symbol: "6",
-          type: "6",
-          direction: "6",
-          price: "6",
-          amount: "6",
-          tradedAmount: "6",
-          turnover: "6",
-          operate: "6",
-        },
-        {
-          id: "7",
-          time: "7",
-          symbol: "7",
-          type: "7",
-          direction: "7",
-          price: "7",
-          amount: "7",
-          tradedAmount: "7",
-          turnover: "7",
-          operate: "7",
-        },
-        {
-          id: "8",
-          time: "8",
-          symbol: "8",
-          type: "8",
-          direction: "8",
-          price: "8",
-          amount: "8",
-          tradedAmount: "8",
-          turnover: "8",
-          operate: "8",
-        },
-        {
-          id: "9",
-          time: "9",
-          symbol: "9",
-          type: "9",
-          direction: "9",
-          price: "9",
-          amount: "9",
-          tradedAmount: "9",
-          turnover: "9",
-          operate: "9",
-        },
-        {
-          id: "9",
-          time: "9",
-          symbol: "9",
-          type: "9",
-          direction: "9",
-          price: "9",
-          amount: "9",
-          tradedAmount: "9",
-          turnover: "9",
-          operate: "9",
-        },
-        {
-          id: "9",
-          time: "9",
-          symbol: "9",
-          type: "9",
-          direction: "9",
-          price: "9",
-          amount: "9",
-          tradedAmount: "9",
-          turnover: "9",
-          operate: "9",
-        },
-      ],
-      swapGroup: [
-        {
-          id: "1",
-          title: "合约组1",
-        },
-        {
-          id: "2",
-          title: "合约组2",
-        },
-      ],
+      selected: "",
+      tableData: [],
+      swapGroup: [],
     };
   },
   created() {
@@ -399,15 +275,51 @@ export default {
     this.rowDrop();
   },
   methods: {
+    updated() {
+      console.log(this.swapGroup);
+    },
     setSort() {
       console.log("setSort");
       this.canSort = !this.canSort;
     },
     init() {
-      console.log(this.user);
+      this.getGroup();
+    },
+    getGroup() {
+      web
+        .request({
+          url: "/fospot/counter/api/quotation/init/view",
+          method: "get",
+        })
+        .then((res) => {
+          if (res != null && res.data != null) {
+            this.swapGroup = res.data.data;
+            if (this.swapGroup.length > 0) {
+              this.selected = this.swapGroup[0].groupId;
+              this.getTableData();
+            }
+          }
+        });
+    },
+    getTableData() {
+      web
+        .request({
+          url: "/fospot/counter/api/quotation/view_group",
+          method: "post",
+          data: {
+            groupId: this.selected,
+          },
+        })
+        .then((res) => {
+          if (res != null && res.data != null) {
+            console.log(res);
+            this.tableData = res.data.data;
+          }
+        });
     },
     changeGroup(val) {
       this.selected = val;
+      this.getTableData();
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";
@@ -421,9 +333,6 @@ export default {
     },
     onChange(value) {
       console.log(value);
-      if (value == "manage") {
-        this.groupVisible = true;
-      }
       this.cascaderValue = [];
     },
     // table的右键点击当前行事件

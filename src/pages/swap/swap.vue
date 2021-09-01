@@ -64,8 +64,7 @@
         <i class="el-icon-s-tools" @click="setVisible = true" />
       </div>
     </div>
-    <div class="row-down" style="height: 60%">
-      <div class="row-order">
+    <div class="row-order">
         <div class="row-order-item" style="width: 300px">
           <DiskPort :user="account"></DiskPort>
         </div>
@@ -76,23 +75,22 @@
           <Entrust :user="account"></Entrust>
         </div>
       </div>
-      <div class="row-order">
+    <div class="row-order">
         <Split v-model="split1">
           <div
             slot="left"
-            style="overflow-y: scroll; height: 100%; border: 1px solid #000000"
+            style="height: 100%; border: 1px solid #000000"
           >
             <Position></Position>
           </div>
           <div
             slot="right"
-            style="overflow-y: scroll; height: 100%; border: 1px solid #000000"
+            style="height: 100%; border: 1px solid #000000"
           >
             <PositionH></PositionH>
           </div>
         </Split>
       </div>
-    </div>
     <el-dialog
       title="交易设置"
       :visible.sync="setVisible"
@@ -327,21 +325,12 @@ export default {
 
 .row-order {
   display: flex;
-  width: 100%;
-  height: 50%;
+  height: 300px;
   align-items: center;
-  flex-direction: row;
-  justify-content: flex-start;
 
   .row-order-item {
     height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
     border: 0.5px solid #000000;
-  }
-
-  .row-down {
-    height: 60%;
   }
 }
 

@@ -91,11 +91,11 @@ export default {
     },
 
     login() {
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           web
             .request({
-              url: "/api/fospot/counter/api/login",
+              url: "/fospot/counter/api/login",
               method: "post",
               data: {
                 username: this.user.name,
@@ -115,9 +115,13 @@ export default {
               console.log(res);
               await Mqtt.setClient("17875865869");
               await Mqtt.init();
+
+              await this.initExchange();
+              await this.initProduct();
+              await this.initContract();
               const loading = this.$loading({
                 lock: true,
-                text: "Loading",
+                text: "初始化中",
                 spinner: "el-icon-loading",
                 background: "rgba(0, 0, 0, 0.7)",
               });
@@ -136,6 +140,46 @@ export default {
           this.showMessage("error", "登录失败，请检查账号密码");
         }
       });
+    },
+
+    async initExchange() {
+      let exchange = await web.request({
+        url: "/fospot/counter/api/index/exchange",
+        method: "get",
+      });
+      if (exchange != null && exchange.data != null) {
+        this.$session.set("exchange", exchange.data.data);
+        console.log("initExchange");
+        console.log(exchange);
+      }
+    },
+
+    async initProduct() {
+      let product = await web.request({
+        url: "/fospot/counter/api/index/product",
+        method: "get",
+      });
+      if (product != null && product.data != null) {
+        this.$session.set("product", product.data.data);
+        console.log("product");
+        console.log(product);
+      }
+    },
+
+    async initContract() {
+      let contract = await web.request({
+        url: "/fospot/counter/api/index/contract",
+        method: "get",
+      });
+      if (
+        contract != null &&
+        contract.data != null &&
+        contract.data.data != null
+      ) {
+        this.$session.set("contract", contract.data.data);
+        console.log("contract");
+        console.log(contract);
+      }
     },
 
     //vue弹窗提示

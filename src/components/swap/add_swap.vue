@@ -18,9 +18,9 @@
               <el-select v-model="value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.memo"
+                  :label="item.memo"
+                  :value="item.memo"
                 >
                 </el-option>
               </el-select>
@@ -30,76 +30,83 @@
       </el-row>
     </div>
     <div class="add-swap-content">
-      <div class="add-swap-content-title">
-        <p>合约列表</p>
-        <div class="line"></div>
-      </div>
-      <el-row>
-        <div class="add-swap-content-list" v-for="item in searchList" :key="item.id">
-          <el-col :span="6"
-            ><div style="text-align: left">{{ item.code }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div style="text-align: left">{{ item.name }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div style="color: #4286f4">{{ item.type }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div v-if="item.isAdd == true">已添加</div>
-            <div v-else><i class="el-icon-circle-plus i-add" @click="add(item)"/></div>
-          </el-col>
+      <div style="width: 44%">
+        <div class="add-swap-content-title">
+          <p>合约列表</p>
+          <div class="line"></div>
         </div>
-      </el-row>
-    </div>
+        <el-table
+          ref="addMultipleTable"
+          :data="list"
+          height="300"
+          :header-cell-style="cellStyle"
+          :cell-style="rowStyle"
+          @selection-change="add"
+        >
+          <el-table-column type="selection"> </el-table-column>
+          <el-table-column label="交易代码" prop="code"> </el-table-column>
+          <el-table-column prop="name" label="合约名称"> </el-table-column>
+        </el-table>
+      </div>
 
-    <div class="add-swap-content">
-      <div class="add-swap-content-title">
-        <p>本次添加</p>
-        <div class="line"></div>
-      </div>
-      <el-row>
-        <div class="add-swap-content-list" v-for="item in newAdd" :key="item.id">
-          <el-col :span="6"
-            ><div style="text-align: left">{{ item.code }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div style="text-align: left">{{ item.name }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div style="color: #4286f4">{{ item.type }}</div>
-          </el-col>
-          <el-col :span="6"
-            ><div v-if="item.isAdd == true">已添加</div>
-            <div v-else><i class="el-icon-circle-plus i-add" @click="add(item)"/></div>
-          </el-col>
+      <div class="add-swap-content-btn-list">
+        <div
+          class="add-swap-content-btn"
+          :class="{ active: this.addList.length > 0 }"
+          @click="setAdd()"
+        >
+          添加
         </div>
-      </el-row>
+        <div
+          class="add-swap-content-btn"
+          :class="{ active: this.deleteList.length > 0 }"
+          @click="setDelete()"
+        >
+          删除
+        </div>
+      </div>
+
+      <div style="width: 44%">
+        <div class="add-swap-content-title">
+          <p>本次添加</p>
+          <div class="line"></div>
+        </div>
+        <el-table
+          ref="deleteMultipleTable"
+          :data="newAdd"
+          height="300"
+          :header-cell-style="cellStyle"
+          :cell-style="rowStyle"
+          @selection-change="deleteItem"
+        >
+          <el-table-column type="selection"> </el-table-column>
+          <el-table-column label="日期" prop="code"> </el-table-column>
+          <el-table-column prop="name" label="合约名称"> </el-table-column>
+        </el-table>
+      </div>
+    </div>
+    <div class="add-swap-btn">
+      <el-button type="primary" plain size="mini" @click="onSubmit()"
+        >确定</el-button
+      >
+      <el-button size="mini">取消</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import web from "@/config/web";
+
 export default {
+  props: ["groundId"],
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-      ],
-      searchKey: '',
+      options: [],
+      searchKey: "",
       value: "",
       newAdd: [],
+      addList: [],
+      deleteList: [],
       searchList: [],
       list: [
         {
@@ -127,13 +134,73 @@ export default {
     };
   },
   methods: {
+    init() {
+      this.getOptions();
+    },
+    getOptions() {
+      let exchange = this.$session.get("exchange");
+      console.log(this.groundId);
+      this.options = exchange;
+      this.value = this.options[0].memo;
+    },
+    getSwapList() {
+      web
+        .request({
+          url: "/fospot/counter/api/quotation/contract",
+          method: "post",
+          data: {
+            exchangeId: this.value.exchangeId,
+            searchKey: this.searchKey,
+          },
+        })
+        .then((res) => {
+          if (res != null && res.data != null) {
+            console.log(res.data);
+            this.options = res.data.data;
+          }
+        });
+    },
+    setAdd() {
+      var that = this;
+      that.addList.forEach(function (value, index, arr) {
+        if (that.newAdd.includes(value) == false) {
+          that.newAdd.push(value);
+        }
+      });
+      that.addList = [];
+      this.$refs.addMultipleTable.clearSelection();
+    },
+    setDelete() {
+      var that = this;
+      that.deleteList.forEach(function (value, index, arr) {
+        if (that.newAdd.includes(value) == true) {
+          let index = that.newAdd.indexOf(value);
+          that.newAdd.remove(index);
+        }
+      });
+      this.$refs.deleteMultipleTable.clearSelection();
+    },
+    deleteItem(value) {
+      this.deleteList = value;
+    },
     add(value) {
-      value.isAdd = true;
-      this.newAdd.push(value);
+      this.addList = value;
+    },
+
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      return "background-color: #2d2d31; color: #fff; height: 20px";
+    },
+    rowStyle({ row, column, rowIndex, columnIndex }) {
+      return "background-color: #1c1d21";
     },
     search() {
-      this.searchList = this.list.filter(item => item.name.indexOf(this.searchKey) >= 0);
-    }
+      this.searchList = this.list.filter(
+        (item) => item.name.indexOf(this.searchKey) >= 0
+      );
+    },
+  },
+  created() {
+    this.init();
   },
   mounted() {
     this.searchList = this.list;
@@ -141,11 +208,12 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .add-swap {
   text-align: center;
   height: auto;
-  max-height: 400px;
+  max-height: 500px;
+  background-color: #2d2d31;
 
   .add-swap-header {
     display: flex;
@@ -159,11 +227,15 @@ export default {
 
     p {
       text-align: center;
-      width: 100px;
+      width: 50px;
+      color: #ffffffcb;
     }
   }
 
   .add-swap-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin: 20px 0;
 
     .add-swap-content-list {
@@ -177,6 +249,110 @@ export default {
     .i-add:hover {
       color: #4286f4;
     }
+  }
+
+  .add-swap-content-title {
+    p {
+      text-align: left;
+      color: #ffffffcb;
+      margin-bottom: 10px;
+    }
+  }
+
+  .add-swap-btn {
+    text-align: right;
+  }
+
+  .el-table th > .cell {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .el-input--suffix .el-input__inner {
+    background-color: #1c1d21;
+    color: #fff !important;
+    height: 30px;
+    border: 1px solid #797979 !important;
+  }
+
+  .el-input-number.is-controls-right .el-input__inner {
+    background-color: #1c1d21;
+    color: #fff !important;
+    height: 30px;
+    border: 1px solid #797979 !important;
+  }
+
+  .el-input-number__decrease,
+  .el-input-number__increase {
+    border: none;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__decrease,
+  .el-input-number.is-controls-right .el-input-number__increase {
+    line-height: 15px;
+  }
+
+  .el-input-number {
+    line-height: 30px;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__decrease {
+    background-color: #1c1d21;
+    color: #fff !important;
+    border: none;
+  }
+
+  .el-input-number.is-controls-right .el-input-number__increase {
+    background-color: #1c1d21;
+    color: #fff !important;
+    border: none;
+  }
+
+  .el-input__icon {
+    width: 25px;
+    line-height: 30px;
+  }
+
+  .el-table td,
+  .el-table th {
+    padding: 5px 0;
+  }
+
+  .el-table td,
+  .el-table th.is-leaf {
+    border: 1px solid #797979;
+  }
+
+  .el-table--enable-row-transition .el-table__body td {
+    border: 1px solid #797979;
+  }
+
+  .el-table .cell {
+    color: #ffffffcb;
+  }
+
+  .el-table::before {
+    background-color: #1c1d21;
+  }
+
+  .el-table__body-wrapper {
+    background-color: #1c1d21;
+  }
+
+  .add-swap-content-btn {
+    width: auto;
+    padding: 2px 10px;
+    margin: 30px 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #ffffffcb;
+    border: 1px solid #ffffffcb;
+  }
+
+  .add-swap-content-btn.active {
+    color: #ffffff;
+    background-color: #174b94c9;
+    border: 1px solid #174b94;
   }
 }
 </style>

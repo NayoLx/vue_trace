@@ -92,6 +92,19 @@ Vue.filter('toFloor', (number, scale) => {
   return toFloor(number, scale);
 });
 
+Array.prototype.remove = function (index) {
+  if (isNaN(index) || index > this.length) {
+      return false;
+  }else {
+      for (var i = 0, n = 0; i < this.length; i++) {
+          if (this[i] != this[index]) {
+              this[n++] = this[i];
+          }
+      }
+      this.length -= 1;
+  }
+};
+
 Vue.prototype.toFloor = toFloor;
 
 new Vue({

@@ -27,8 +27,6 @@
   }
 
   .main-position-table {
-    overflow-y: scroll;
-    overflow-x: hidden;
     height: 300px;
   }
 
