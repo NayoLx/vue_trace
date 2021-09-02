@@ -82,6 +82,10 @@
   .el-dialog__headerbtn {
     top: 15px;
   }
+
+  .el-cascader-menu__wrap {
+    height: auto;
+  }
 }
 </style>
 
@@ -121,7 +125,7 @@
   <div class="self_swap" @click="foo()">
     <div class="swap_group">
       <vuedraggable v-model="swapGroup" :v-bind="updated()">
-        <transition-group style="display:flex">
+        <transition-group style="display: flex">
           <div
             class="swap_group_item"
             v-for="item in swapGroup"
@@ -142,6 +146,7 @@
         style="width: 100%; color: #fff"
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
+        @row-dblclick="onDblClick"
       >
         <el-table-column width="50" align="center">
           <template slot="header">
@@ -202,9 +207,10 @@
       title="添加自选合约"
       :visible.sync="dialogVisible"
       width="60%"
+      :close-on-click-modal="false"
       v-dialogDrag
     >
-      <AddSwap :groundId="selected"></AddSwap>
+      <AddSwap :groundId="selected" :swapGroup="swapGroup" :onClose="onClose"></AddSwap>
     </el-dialog>
   </div>
 </template>
@@ -214,6 +220,7 @@ import vuedraggable from "vuedraggable";
 import Sortable from "sortablejs";
 import AddSwap from "./add_swap.vue";
 import web from "@/config/web";
+import { EventBus } from "@/utils/event_bus.js";
 
 export default {
   props: ["user"],
@@ -275,13 +282,23 @@ export default {
     this.rowDrop();
   },
   methods: {
+    //拖拽方法
     updated() {
       console.log(this.swapGroup);
+    },
+    //dialog方法
+    onClose(result) {
+      this.dialogVisible = false;
+      console.log('onclose');
+      if (result == true) {
+        this.init();
+      }
     },
     setSort() {
       console.log("setSort");
       this.canSort = !this.canSort;
     },
+    //初始化
     init() {
       this.getGroup();
     },
@@ -320,6 +337,10 @@ export default {
     changeGroup(val) {
       this.selected = val;
       this.getTableData();
+    },
+    //行双击
+    onDblClick(row, column, event) {
+      EventBus.$emit("order", row);
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";

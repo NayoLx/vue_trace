@@ -312,6 +312,8 @@
 </style>
 
 <script>
+import { EventBus } from "@/utils/event_bus.js";
+
 export default {
   props: ["user"],
   data() {
@@ -434,6 +436,12 @@ export default {
   mounted() {
     this.list = this.states.map((item) => {
       return { value: `${item}`, label: `${item}` };
+    });
+    //使用前，先解绑order，以防重复绑定
+    EventBus.$off('order');
+    EventBus.$on('order', (msg) => {
+      console.log('收到收到');
+      console.log(msg.contractName);
     });
   },
   methods: {

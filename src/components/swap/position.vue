@@ -64,23 +64,28 @@
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
       >
-        <el-table-column label="报单编号" prop="time" width="150">
+        <el-table-column label="品种" prop="time" width="150">
         </el-table-column>
-        <el-table-column label="合约" prop="symbol" width="150">
+        <el-table-column label="净持仓" width="150">
+          <el-table-column prop="symbol"></el-table-column>
+          <el-table-column prop="symbol"></el-table-column>
         </el-table-column>
-        <el-table-column label="买卖" prop="type" width="150">
+        <el-table-column label="今买" width="150">
+          <el-table-column prop="type"></el-table-column>
+          <el-table-column prop="type"></el-table-column>
         </el-table-column>
-        <el-table-column label="开平" prop="direction" width="150">
+        <el-table-column label="今卖" width="150">
+          <el-table-column prop="type"></el-table-column>
+          <el-table-column prop="type"></el-table-column>
         </el-table-column>
-        <el-table-column label="报单手数" prop="price" width="150">
+        <el-table-column label="最后成交价" prop="direction" width="150">
         </el-table-column>
-        <el-table-column label="报单价格" prop="amount" width="150">
+        <el-table-column label="盈亏" prop="price" width="150">
         </el-table-column>
-        <el-table-column label="未成交手数" prop="turnover" width="150">
+        <el-table-column label="持仓盈亏" prop="amount" width="150">
         </el-table-column>
-        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        <el-table-column label="平仓盈亏" prop="turnover" width="150">
         </el-table-column>
-        <el-table-column label="详细状态" prop="operate"> </el-table-column>
       </el-table>
     </div>
 
@@ -114,6 +119,9 @@ export default {
   created() {},
   methods: {
     cellStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 1) {
+        return { display: "none" };
+      }
       return "background-color: #2d2d31; color: #fff; height: 20px";
     },
 

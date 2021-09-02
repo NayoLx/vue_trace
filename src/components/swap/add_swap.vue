@@ -15,7 +15,11 @@
           <div class="add-swap-header-item">
             <p>交易所</p>
             <div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select
+                v-model="value"
+                placeholder="请选择"
+                @change="onChangeExchange()"
+              >
                 <el-option
                   v-for="item in options"
                   :key="item.memo"
@@ -37,15 +41,17 @@
         </div>
         <el-table
           ref="addMultipleTable"
-          :data="list"
+          :data="searchList"
           height="300"
           :header-cell-style="cellStyle"
           :cell-style="rowStyle"
           @selection-change="add"
         >
           <el-table-column type="selection"> </el-table-column>
-          <el-table-column label="交易代码" prop="code"> </el-table-column>
-          <el-table-column prop="name" label="合约名称"> </el-table-column>
+          <el-table-column label="交易代码" prop="contractCode">
+          </el-table-column>
+          <el-table-column prop="contractName" label="合约名称">
+          </el-table-column>
         </el-table>
       </div>
 
@@ -68,29 +74,79 @@
 
       <div style="width: 44%">
         <div class="add-swap-content-title">
-          <p>本次添加</p>
-          <div class="line"></div>
+          <div>
+            <Dropdown
+              trigger="click"
+              style="margin: 0 20px; color: #fff; margin-bottom: 10px"
+            >
+              <span v-if="selectGroup.groupName == null">合约组名称</span
+              ><span v-else>{{ selectGroup.groupName }}</span>
+              <Icon type="ios-arrow-down"></Icon>
+              <DropdownMenu slot="list">
+                <DropdownItem
+                  v-for="item in swapGroup"
+                  v-bind:key="item.id"
+                  @click.native="change(item)"
+                  >{{ item.groupName }}</DropdownItem
+                >
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+          <div class="line">
+            <i class="el-icon-edit-outline" @click="iEdit()" />
+            <i class="el-icon-plus" @click="iAdd()" />
+            <i class="el-icon-delete-solid" @click="iDelete()" />
+          </div>
         </div>
         <el-table
           ref="deleteMultipleTable"
-          :data="newAdd"
+          :data="contractList"
           height="300"
           :header-cell-style="cellStyle"
           :cell-style="rowStyle"
           @selection-change="deleteItem"
         >
           <el-table-column type="selection"> </el-table-column>
-          <el-table-column label="日期" prop="code"> </el-table-column>
-          <el-table-column prop="name" label="合约名称"> </el-table-column>
+          <el-table-column label="日期" prop="contractCode"> </el-table-column>
+          <el-table-column prop="contractName" label="合约名称">
+          </el-table-column>
         </el-table>
       </div>
     </div>
     <div class="add-swap-btn">
-      <el-button type="primary" plain size="mini" @click="onSubmit()"
+      <el-button type="primary" plain size="mini" @click="onSubmitBack()"
         >确定</el-button
       >
-      <el-button size="mini">取消</el-button>
+      <el-button size="mini" @click="onBack()">取消</el-button>
     </div>
+
+    <el-dialog
+      :title="title"
+      :visible.sync="addVisible"
+      width="20%"
+      v-dialogDrag
+      append-to-body
+    >
+      <template>
+        <div>
+          <p>请输入合约组的名称</p>
+          <el-input
+            type="text"
+            size="mini"
+            placeholder="请输入内容"
+            v-model="new_name"
+            maxlength="20"
+            show-word-limit
+          ></el-input>
+          <div>
+            <el-button type="primary" plain size="mini" @click="onSubmit()"
+              >确定</el-button
+            >
+            <el-button size="mini">取消</el-button>
+          </div>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -98,39 +154,21 @@
 import web from "@/config/web";
 
 export default {
-  props: ["groundId"],
+  props: ["groundId", "swapGroup", "onClose"],
   data() {
     return {
+      title: "",
       options: [],
       searchKey: "",
       value: "",
-      newAdd: [],
-      addList: [],
-      deleteList: [],
-      searchList: [],
-      list: [
-        {
-          name: "沪镍",
-          id: 0,
-          code: "ni9999",
-          type: "期货",
-          isAdd: false,
-        },
-        {
-          name: "橡胶",
-          id: 1,
-          code: "ni9999",
-          type: "期货",
-          isAdd: false,
-        },
-        {
-          name: "沪铝",
-          id: 2,
-          code: "ni9999",
-          type: "期货",
-          isAdd: true,
-        },
-      ],
+      selectGroup: "",
+      new_name: "",
+      addVisible: false,
+      contractList: [], //合约组里得所有合约
+      addList: [], //新增列表
+      deleteList: [], //删除列表
+      searchList: [], //搜索列表
+      list: [], //合约总列表
     };
   },
   methods: {
@@ -139,46 +177,122 @@ export default {
     },
     getOptions() {
       let exchange = this.$session.get("exchange");
-      console.log(this.groundId);
+      let contract = this.$session.get("contract");
+      this.selectGroup = this.swapGroup[0];
       this.options = exchange;
       this.value = this.options[0].memo;
+      for (var i = 0; i < contract.length; i++) {
+        if (contract[i].exchange.memo == this.value) {
+          this.list.push(contract[i]);
+        }
+      }
+      this.contractList = this.selectGroup.contractData;
     },
-    getSwapList() {
-      web
-        .request({
-          url: "/fospot/counter/api/quotation/contract",
-          method: "post",
-          data: {
-            exchangeId: this.value.exchangeId,
-            searchKey: this.searchKey,
-          },
-        })
-        .then((res) => {
-          if (res != null && res.data != null) {
-            console.log(res.data);
-            this.options = res.data.data;
-          }
-        });
+    onChangeExchange() {
+      let contract = this.$session.get("contract");
+      this.list = [];
+      for (var i = 0; i < contract.length; i++) {
+        if (contract[i].exchange.memo == this.value) {
+          this.list.push(contract[i]);
+        }
+      }
+      this.searchList = this.list;
+      this.searchKey = "";
     },
+    change(value) {
+      this.selectGroup = value;
+      this.contractList = this.selectGroup.contractData;
+    },
+    //订阅
     setAdd() {
       var that = this;
+      var contractIds = [];
       that.addList.forEach(function (value, index, arr) {
-        if (that.newAdd.includes(value) == false) {
-          that.newAdd.push(value);
+        var contractItem = that.contractList.find(
+          (item) => item.id == value.id
+        );
+        if (contractItem == null) {
+          contractIds.push(value.id);
         }
       });
-      that.addList = [];
-      this.$refs.addMultipleTable.clearSelection();
+      if (contractIds.length > 0) {
+        web
+          .request({
+            url: this.api.swap.addSwap,
+            method: "post",
+            data: {
+              groupId: that.selectGroup.groupId,
+              contractIds: contractIds,
+            },
+          })
+          .then((res) => {
+            if (res != null && res.data.code == 200) {
+              that.addList.forEach(function (value, index, arr) {
+                var contractItem = that.contractList.find(
+                  (item) => item.id == value.id
+                );
+                if (contractItem == null) {
+                  that.contractList.push(value);
+                }
+              });
+              that.addList = [];
+              this.$refs.addMultipleTable.clearSelection();
+            }
+          });
+      } else {
+        that.addList = [];
+        this.$refs.addMultipleTable.clearSelection();
+      }
     },
+    //取消订阅
     setDelete() {
       var that = this;
+      var contractIds = [];
       that.deleteList.forEach(function (value, index, arr) {
-        if (that.newAdd.includes(value) == true) {
-          let index = that.newAdd.indexOf(value);
-          that.newAdd.remove(index);
+        var contractItem = that.contractList.find(
+          (item) => item.id == value.id
+        );
+        if (contractItem != null) {
+          contractIds.push(value.id);
         }
       });
-      this.$refs.deleteMultipleTable.clearSelection();
+      if (contractIds.length > 0) {
+        web
+          .request({
+            url: this.api.swap.deleteSwap,
+            method: "post",
+            data: {
+              groupId: that.selectGroup.groupId,
+              contractIds: contractIds,
+            },
+          })
+          .then((res) => {
+            if (res != null && res.data.code == 200) {
+              that.deleteList.forEach(function (value, index, arr) {
+                var contractItem = that.contractList.find(
+                  (item) => item.id == value.id
+                );
+                if (contractItem != null) {
+                  let index = that.contractList.findIndex(
+                    (item) => item.id == value.id
+                  );
+                  that.contractList.remove(index);
+                }
+              });
+              this.$refs.deleteMultipleTable.clearSelection();
+            }
+          });
+      } else {
+        that.addList = [];
+        this.$refs.addMultipleTable.clearSelection();
+      }
+    },
+    //后退刷新
+    onSubmitBack() {
+      this.onClose(true);
+    },
+    onBack() {
+      this.onClose();
     },
     deleteItem(value) {
       this.deleteList = value;
@@ -186,7 +300,6 @@ export default {
     add(value) {
       this.addList = value;
     },
-
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";
     },
@@ -194,9 +307,25 @@ export default {
       return "background-color: #1c1d21";
     },
     search() {
+      console.log("searchKey");
+      console.log(this.searchKey);
       this.searchList = this.list.filter(
-        (item) => item.name.indexOf(this.searchKey) >= 0
+        (item) => item.contractName.indexOf(this.searchKey) >= 0
       );
+    },
+    iEdit() {
+      if (this.selectGroup != null && this.selectGroup.groupName != null) {
+        console.log("edit");
+        this.title = "修改";
+        this.new_name = this.selectGroup.groupName;
+        this.addVisible = true;
+      }
+    },
+    iAdd() {
+      console.log("add");
+    },
+    iDelete() {
+      console.log("delete");
     },
   },
   created() {
@@ -252,6 +381,17 @@ export default {
   }
 
   .add-swap-content-title {
+    display: flex;
+    justify-content: space-between;
+
+    .line {
+      color: #fff;
+
+      i {
+        margin: 0 3px;
+      }
+    }
+
     p {
       text-align: left;
       color: #ffffffcb;
@@ -333,6 +473,27 @@ export default {
 
   .el-table::before {
     background-color: #1c1d21;
+  }
+
+  .el-dialog {
+    background-color: #2d2d31;
+  }
+
+  .el-dialog__title {
+    color: #ffffff;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #ffffff;
+  }
+
+  .el-dialog__header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #797979;
+  }
+
+  .el-dialog__headerbtn {
+    top: 15px;
   }
 
   .el-table__body-wrapper {

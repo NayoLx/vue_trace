@@ -106,6 +106,7 @@ Array.prototype.remove = function (index) {
 };
 
 Vue.prototype.toFloor = toFloor;
+Vue.prototype.$EventBus = new Vue();
 
 new Vue({
   router,

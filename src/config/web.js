@@ -42,8 +42,8 @@ class web {
         }, (err) => {
             loading.close();
             if (err.response) { // 响应错误码处理
-                switch (err.response.code) {
-                    case '401':
+                switch (err.response.status) {
+                    case 401:
                         Message({
                             type: 'error',
                             message: '令牌已过期，请重新登录',
@@ -52,7 +52,7 @@ class web {
                             location.replace('/'); //返回登录    
                         }, 1000)
                         break;
-                    case '404':
+                    case 404:
                         Message({
                             type: 'error',
                             message: '请求页面不存在',
