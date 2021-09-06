@@ -126,12 +126,8 @@
 </style>
 
 <template>
-  <div
-    class="self_swap"
-    @click="foo()"
-  >
-    <div class="swap_group" 
-    @contextmenu.prevent="divRightClick($event)">
+  <div class="self_swap" @click="foo()">
+    <div class="swap_group" @contextmenu.prevent="divRightClick($event)">
       <div
         class="swap_group_item"
         v-for="item in swapGroup"
@@ -255,42 +251,7 @@ export default {
           label: "设置合约",
         },
       ],
-      options: [
-        {
-          value: "order",
-          label: "下单",
-        },
-        {
-          value: "move",
-          label: "移动到",
-          children: [
-            {
-              value: "yizhi",
-              label: "一致",
-            },
-            {
-              value: "fankui",
-              label: "反馈",
-            },
-            {
-              value: "xiaolv",
-              label: "效率",
-            },
-            {
-              value: "kekong",
-              label: "可控",
-            },
-          ],
-        },
-        {
-          value: "add",
-          label: "设置合约",
-        },
-        {
-          value: "delete",
-          label: "删除",
-        },
-      ],
+      options: [],
       dialogVisible: false,
       menuVisible: false,
       divMenuVisible: false,
@@ -298,12 +259,14 @@ export default {
       tableData: [],
       swapGroup: [],
       activeRow: "",
+      rightClickRow: "",
     };
   },
   created() {
     this.init();
   },
   mounted() {
+    this.init();
     this.rowDrop();
     this.updated();
   },
@@ -316,14 +279,12 @@ export default {
         onEnd({ newIndex, oldIndex }) {
           const currRow = _this.swapGroup.splice(oldIndex, 1)[0];
           _this.swapGroup.splice(newIndex, 0, currRow);
-          console.log(_this.swapGroup);
         },
       });
     },
     //dialog方法
     onClose(result) {
       this.dialogVisible = false;
-      console.log("onclose");
       if (result == true) {
         this.init();
       }
@@ -345,12 +306,45 @@ export default {
         .then((res) => {
           if (res != null && res.data != null) {
             this.swapGroup = res.data.data;
+            this.groupOptions = [];
             if (this.swapGroup.length > 0) {
               this.selected = this.swapGroup[0].groupId;
+              this.setOptions();
               this.getTableData();
             }
           }
         });
+    },
+    //设置右键菜单
+    setOptions() {
+      var groupOptions = [];
+      if (this.swapGroup.length > 0) {
+        this.swapGroup.forEach((item, index) => {
+          groupOptions.push({
+            value: item.groupId,
+            label: item.groupName,
+          });
+        });
+      }
+      this.options = [
+        {
+          value: "order",
+          label: "下单",
+        },
+        {
+          value: "move",
+          label: "移动到",
+          children: groupOptions,
+        },
+        {
+          value: "add",
+          label: "设置合约",
+        },
+        {
+          value: "delete",
+          label: "删除",
+        },
+      ]
     },
     getTableData() {
       web
@@ -363,7 +357,6 @@ export default {
         })
         .then((res) => {
           if (res != null && res.data != null) {
-            console.log(res.data.data);
             this.tableData = res.data.data;
           }
         });
@@ -387,16 +380,46 @@ export default {
       return "background-color: #1c1d21";
     },
     addSwap() {
-      console.log("addswap");
       this.dialogVisible = true;
     },
+    //右键
     onChange(value) {
-      console.log(value);
       this.cascaderValue = [];
+      if (value == "order") {
+        EventBus.$emit("order", this.rightClickRow);
+      } else if (value == "add") {
+        this.addSwap();
+      } else if (value == "delete") {
+        this.onDelete();
+      } else if (value[0] == "move") {
+        console.log(value);
+        this.onMove();
+      }
+    },
+    //删除
+    onDelete() {
+      var that = this;
+      web
+        .request({
+          url: this.api.swap.deleteSwap,
+          method: "post",
+          data: {
+            groupId: that.selected,
+            contractIds: [that.rightClickRow.id],
+          },
+        })
+        .then((res) => {
+          if (res != null && res.data.code == 200) {
+            this.getTableData();
+          }
+        });
+    },
+    //移动到
+    onMove() {
+
     },
     //div的右键点击
     divRightClick(event) {
-      console.log(event);
       this.divMenuVisible = false;
       this.divMenuVisible = true;
       var menu = document.querySelector("#div_contextmenu");
@@ -423,6 +446,7 @@ export default {
       // 改变自定义菜单的隐藏与显示
       menu.style.display = "block";
       // 获取当前右键点击table下标
+      this.rightClickRow = row;
       this.tableData.forEach((item, index) => {
         if (item.name === row.name) {
           this.currentRowIndex = index;
@@ -441,9 +465,7 @@ export default {
     rowDrop() {
       const tbody = document.querySelector(".el-table__body-wrapper tbody");
       const _this = this;
-      console.log(this.canSort);
       Sortable.create(tbody, {
-        disabled: this.canSort,
         onEnd({ newIndex, oldIndex }) {
           const currRow = _this.tableData.splice(oldIndex, 1)[0];
           _this.tableData.splice(newIndex, 0, currRow);
