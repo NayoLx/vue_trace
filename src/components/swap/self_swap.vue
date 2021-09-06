@@ -170,9 +170,9 @@
             <span>{{ scope.$index }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="合约" prop="time" width="150">
+        <el-table-column label="合约" prop="contractCode" width="150">
         </el-table-column>
-        <el-table-column label="合约名" prop="symbol" width="150">
+        <el-table-column label="合约名" prop="contractName" width="150">
         </el-table-column>
         <el-table-column label="最新价" prop="type" width="150">
         </el-table-column>
@@ -363,7 +363,7 @@ export default {
         })
         .then((res) => {
           if (res != null && res.data != null) {
-            console.log(res);
+            console.log(res.data.data);
             this.tableData = res.data.data;
           }
         });
