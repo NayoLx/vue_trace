@@ -86,6 +86,10 @@
   .el-cascader-menu__wrap {
     height: auto;
   }
+
+  .el-table tbody tr:hover > td {
+    background-color: #4286f483 !important;
+  }
 }
 </style>
 
@@ -122,21 +126,21 @@
 </style>
 
 <template>
-  <div class="self_swap" @click="foo()">
-    <div class="swap_group">
-      <vuedraggable v-model="swapGroup" :v-bind="updated()">
-        <transition-group style="display: flex">
-          <div
-            class="swap_group_item"
-            v-for="item in swapGroup"
-            v-bind:key="item.groupId"
-            @click="changeGroup(item.groupId)"
-            :class="{ active: selected === item.groupId }"
-          >
-            {{ item.groupName }}
-          </div>
-        </transition-group>
-      </vuedraggable>
+  <div
+    class="self_swap"
+    @click="foo()"
+  >
+    <div class="swap_group" 
+    @contextmenu.prevent="divRightClick($event)">
+      <div
+        class="swap_group_item"
+        v-for="item in swapGroup"
+        v-bind:key="item.groupId"
+        @click="changeGroup(item.groupId)"
+        :class="{ active: selected === item.groupId }"
+      >
+        {{ item.groupName }}
+      </div>
     </div>
     <div class="self-swap-table">
       <el-table
@@ -146,7 +150,7 @@
         style="width: 100%; color: #fff"
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
-        @row-dblclick="onDblClick"
+        @row-click="onDblClick"
       >
         <el-table-column width="50" align="center">
           <template slot="header">
@@ -203,6 +207,17 @@
       ></el-cascader-panel>
     </div>
 
+    <div id="div_contextmenu" v-show="divMenuVisible" class="menu">
+      <el-cascader-panel
+        v-model="cascaderValue"
+        :options="dieOptions"
+        ref="cascaderRef"
+        @change="onChange"
+        :props="{ expandTrigger: 'hover' }"
+        clearable
+      ></el-cascader-panel>
+    </div>
+
     <el-dialog
       title="添加自选合约"
       :visible.sync="dialogVisible"
@@ -210,13 +225,16 @@
       :close-on-click-modal="false"
       v-dialogDrag
     >
-      <AddSwap :groundId="selected" :swapGroup="swapGroup" :onClose="onClose"></AddSwap>
+      <AddSwap
+        :groundId="selected"
+        :swapGroup="swapGroup"
+        :onClose="onClose"
+      ></AddSwap>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import vuedraggable from "vuedraggable";
 import Sortable from "sortablejs";
 import AddSwap from "./add_swap.vue";
 import web from "@/config/web";
@@ -226,12 +244,17 @@ export default {
   props: ["user"],
   components: {
     AddSwap,
-    vuedraggable,
   },
   data() {
     return {
       canSort: true,
       cascaderValue: "",
+      dieOptions: [
+        {
+          value: "add",
+          label: "设置合约",
+        },
+      ],
       options: [
         {
           value: "order",
@@ -270,9 +293,11 @@ export default {
       ],
       dialogVisible: false,
       menuVisible: false,
+      divMenuVisible: false,
       selected: "",
       tableData: [],
       swapGroup: [],
+      activeRow: "",
     };
   },
   created() {
@@ -280,23 +305,32 @@ export default {
   },
   mounted() {
     this.rowDrop();
+    this.updated();
   },
   methods: {
     //拖拽方法
     updated() {
-      console.log(this.swapGroup);
+      const tbody = document.querySelector(".swap_group");
+      const _this = this;
+      Sortable.create(tbody, {
+        onEnd({ newIndex, oldIndex }) {
+          const currRow = _this.swapGroup.splice(oldIndex, 1)[0];
+          _this.swapGroup.splice(newIndex, 0, currRow);
+          console.log(_this.swapGroup);
+        },
+      });
     },
     //dialog方法
     onClose(result) {
       this.dialogVisible = false;
-      console.log('onclose');
+      console.log("onclose");
       if (result == true) {
         this.init();
       }
     },
     setSort() {
-      console.log("setSort");
       this.canSort = !this.canSort;
+      this.rowDrop();
     },
     //初始化
     init() {
@@ -341,11 +375,15 @@ export default {
     //行双击
     onDblClick(row, column, event) {
       EventBus.$emit("order", row);
+      this.activeRow = row;
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";
     },
     rowStyle({ row, column, rowIndex, columnIndex }) {
+      if (row == this.activeRow) {
+        return "background-color: #4286f4 !important;";
+      }
       return "background-color: #1c1d21";
     },
     addSwap() {
@@ -356,11 +394,26 @@ export default {
       console.log(value);
       this.cascaderValue = [];
     },
+    //div的右键点击
+    divRightClick(event) {
+      console.log(event);
+      this.divMenuVisible = false;
+      this.divMenuVisible = true;
+      var menu = document.querySelector("#div_contextmenu");
+      event.preventDefault();
+      //获取我们自定义的右键菜单
+
+      // 根据事件对象中鼠标点击的位置，进行定位
+      menu.style.left = event.clientX + "px";
+      menu.style.top = event.clientY + "px";
+      // 改变自定义菜单的隐藏与显示
+      menu.style.display = "block";
+    },
     // table的右键点击当前行事件
     rightClick(row, column, event) {
       this.menuVisible = false;
       this.menuVisible = true;
-      var menu = document.querySelector(".menu");
+      var menu = document.querySelector("#contextmenu");
       event.preventDefault();
       //获取我们自定义的右键菜单
 
@@ -381,19 +434,21 @@ export default {
     foo() {
       // 取消鼠标监听事件 菜单栏
       this.menuVisible = false;
+      this.divMenuVisible = false;
       document.removeEventListener("click", this.foo); // 关掉监听，
     },
+    //拖拽
     rowDrop() {
-      if (this.canSort == true) {
-        const tbody = document.querySelector(".el-table__body-wrapper tbody");
-        const _this = this;
-        Sortable.create(tbody, {
-          onEnd({ newIndex, oldIndex }) {
-            const currRow = _this.tableData.splice(oldIndex, 1)[0];
-            _this.tableData.splice(newIndex, 0, currRow);
-          },
-        });
-      }
+      const tbody = document.querySelector(".el-table__body-wrapper tbody");
+      const _this = this;
+      console.log(this.canSort);
+      Sortable.create(tbody, {
+        disabled: this.canSort,
+        onEnd({ newIndex, oldIndex }) {
+          const currRow = _this.tableData.splice(oldIndex, 1)[0];
+          _this.tableData.splice(newIndex, 0, currRow);
+        },
+      });
     },
   },
 };

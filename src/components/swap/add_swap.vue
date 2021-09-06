@@ -123,26 +123,58 @@
     <el-dialog
       :title="title"
       :visible.sync="addVisible"
-      width="20%"
+      width="25%"
       v-dialogDrag
-      append-to-body
+      :modal="false"
     >
       <template>
-        <div>
-          <p>请输入合约组的名称</p>
-          <el-input
-            type="text"
-            size="mini"
-            placeholder="请输入内容"
-            v-model="new_name"
-            maxlength="20"
-            show-word-limit
-          ></el-input>
-          <div>
-            <el-button type="primary" plain size="mini" @click="onSubmit()"
-              >确定</el-button
-            >
-            <el-button size="mini">取消</el-button>
+        <div class="add-dialog-main">
+          <div v-if="dialogType == 'add'">
+            <p>请输入合约组的名称</p>
+            <el-input
+              type="text"
+              size="mini"
+              placeholder="请输入内容"
+              v-model="new_name"
+              maxlength="20"
+              show-word-limit
+            ></el-input>
+            <div class="add-dialog-btn">
+              <el-button type="primary" plain size="mini" @click="onSubmit()"
+                >确定</el-button
+              >
+              <el-button size="mini">取消</el-button>
+            </div>
+          </div>
+          <div v-else-if="dialogType == 'edit'">
+            <p>原名称：{{ selectGroup.groupName }}</p>
+            <div style="display: flex; align-item: center">
+              <p style="text-align: start; flex: 3">新名称：</p>
+              <el-input
+                type="text"
+                size="mini"
+                placeholder="请输入内容"
+                v-model="new_name"
+                maxlength="20"
+                show-word-limit
+              ></el-input>
+            </div>
+            <div class="add-dialog-btn">
+              <el-button type="primary" plain size="mini" @click="onSubmit()"
+                >确定</el-button
+              >
+              <el-button size="mini">取消</el-button>
+            </div>
+          </div>
+          <div v-else-if="dialogType == 'delete'">
+            <p style="color: #fff">确认删除当前合约组</p>
+            <p style="margin: 15px 0">(组内合约也会被删除)</p>
+            <div class="add-dialog-btn">
+              <el-button type="primary" plain size="mini" @click="onSubmit()"
+                >确定</el-button
+              >
+              <el-button size="mini">取消</el-button>
+            </div>
           </div>
         </div>
       </template>
@@ -161,6 +193,7 @@ export default {
       options: [],
       searchKey: "",
       value: "",
+      dialogType: "",
       selectGroup: "",
       new_name: "",
       addVisible: false,
@@ -201,7 +234,21 @@ export default {
     },
     change(value) {
       this.selectGroup = value;
-      this.contractList = this.selectGroup.contractData;
+      if (this.selectGroup != null && this.selectGroup.groupId != null) {
+        web
+          .request({
+            url: "/fospot/counter/api/quotation/view_group",
+            method: "post",
+            data: {
+              groupId: this.selectGroup.groupId,
+            },
+          })
+          .then((res) => {
+            if (res != null && res.data != null) {
+              this.contractList = res.data.data;
+            }
+          });
+      }
     },
     //订阅
     setAdd() {
@@ -316,16 +363,94 @@ export default {
     iEdit() {
       if (this.selectGroup != null && this.selectGroup.groupName != null) {
         console.log("edit");
-        this.title = "修改";
-        this.new_name = this.selectGroup.groupName;
+        this.title = "编辑合约组";
         this.addVisible = true;
+        this.dialogType = "edit";
       }
     },
     iAdd() {
-      console.log("add");
+      this.title = "新建合约组";
+      this.addVisible = true;
+      this.dialogType = "add";
     },
     iDelete() {
-      console.log("delete");
+      if (this.selectGroup != null && this.selectGroup.groupName != null) {
+        this.title = "操作确认";
+        this.addVisible = true;
+        this.dialogType = "delete";
+      }
+    },
+    onRefresh() {
+      web
+        .request({
+          url: "/fospot/counter/api/quotation/init/view",
+          method: "get",
+        })
+        .then((res) => {
+          if (res != null && res.data != null) {
+            this.swapGroup = res.data.data;
+          }
+        });
+    },
+    //弹窗确认
+    onSubmit() {
+      var that = this;
+      if (this.dialogType == "add") {
+        web
+          .request({
+            url: this.api.swap.addGroup,
+            method: "post",
+            data: {
+              groupName: that.new_name,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            if (res != null && res.data != null && res.data.code == 200) {
+              that.addVisible = false;
+              that.new_name = "";
+              this.onRefresh();
+            }
+          });
+      } else if (that.dialogType == "edit") {
+        web
+          .request({
+            url: that.api.swap.updateGroup,
+            method: "post",
+            data: {
+              groupId: that.selectGroup.groupId,
+              groupName: that.new_name,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            if (res != null && res.data != null && res.data.code == 200) {
+              that.addVisible = false;
+              that.selectGroup.groupName = that.new_name;
+              that.new_name = "";
+            }
+          });
+      } else if (that.dialogType == "delete") {
+        web
+          .request({
+            url: that.api.swap.removeGroup,
+            method: "post",
+            data: {
+              groupId: that.selectGroup.groupId,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            if (res != null && res.data != null && res.data.code == 200) {
+              that.addVisible = false;
+              let index = that.swapGroup.findIndex(
+                (item) => item.groupId == that.selectGroup.groupId
+              );
+              that.swapGroup.remove(index);
+              that.selectGroup = that.swapGroup[0];
+            }
+          });
+      }
     },
   },
   created() {
@@ -343,6 +468,44 @@ export default {
   height: auto;
   max-height: 500px;
   background-color: #2d2d31;
+
+  .add-dialog-main {
+    .el-dialog__body {
+      padding: 20px 20px;
+    }
+
+    .add-dialog-btn {
+      margin-top: 10px;
+      text-align: end;
+    }
+
+    .el-input__inner {
+      border: none;
+      margin: 10px 0;
+    }
+
+    .el-input--mini .el-input__inner {
+      background-color: #000000;
+      color: #ffffffcb;
+    }
+
+    .el-input .el-input__count .el-input__count-inner {
+      background-color: #000000;
+      color: #ffffff;
+    }
+  }
+
+  .add-dialog-main {
+    p {
+      color: #ffffffcb;
+      text-align: start;
+    }
+  }
+
+  .el-dialog {
+    background-color: #2d2d31;
+    border: 1px solid #797979;
+  }
 
   .add-swap-header {
     display: flex;
@@ -473,27 +636,6 @@ export default {
 
   .el-table::before {
     background-color: #1c1d21;
-  }
-
-  .el-dialog {
-    background-color: #2d2d31;
-  }
-
-  .el-dialog__title {
-    color: #ffffff;
-  }
-
-  .el-dialog__headerbtn .el-dialog__close {
-    color: #ffffff;
-  }
-
-  .el-dialog__header {
-    padding: 10px 20px;
-    border-bottom: 1px solid #797979;
-  }
-
-  .el-dialog__headerbtn {
-    top: 15px;
   }
 
   .el-table__body-wrapper {

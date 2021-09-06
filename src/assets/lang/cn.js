@@ -202,8 +202,8 @@ module.exports = {
         moredetail: "更多详情"
     },
     swap: {
-        self: '自选',
-        self_model: '自选板块',
+        self: '报价表',
+        self_model: '期权报价表',
         contract: "合约",
         swapindex: "永续",
         coin: '币种',
