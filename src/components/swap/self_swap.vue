@@ -274,11 +274,26 @@ export default {
     //拖拽方法
     updated() {
       const tbody = document.querySelector(".swap_group");
-      const _this = this;
+      const that = this;
       Sortable.create(tbody, {
         onEnd({ newIndex, oldIndex }) {
-          const currRow = _this.swapGroup.splice(oldIndex, 1)[0];
-          _this.swapGroup.splice(newIndex, 0, currRow);
+          const currRow = that.swapGroup.splice(oldIndex, 1)[0];
+          that.swapGroup.splice(newIndex, 0, currRow);
+          that.sortSwapGroup();
+        },
+      });
+    },
+    //排序接口
+    sortSwapGroup() {
+      var groupIds = [];
+      for (var i = 0; i < this.swapGroup.length; i++) {
+        groupIds.push(this.swapGroup[i].groupId);
+      }
+      web.request({
+        url: this.api.swap.sortGroup,
+        method: "post",
+        data: {
+          groupIds: groupIds,
         },
       });
     },
@@ -300,7 +315,7 @@ export default {
     getGroup() {
       web
         .request({
-          url: "/fospot/counter/api/quotation/init/view",
+          url: this.api.swap.initView,
           method: "get",
         })
         .then((res) => {
@@ -344,20 +359,21 @@ export default {
           value: "delete",
           label: "删除",
         },
-      ]
+      ];
     },
     getTableData() {
+      var that = this;
       web
         .request({
-          url: "/fospot/counter/api/quotation/view_group",
+          url: that.api.swap.viewGroup,
           method: "post",
           data: {
-            groupId: this.selected,
+            groupId: that.selected,
           },
         })
         .then((res) => {
           if (res != null && res.data != null) {
-            this.tableData = res.data.data;
+            that.tableData = res.data.data;
           }
         });
     },
@@ -401,7 +417,7 @@ export default {
       var that = this;
       web
         .request({
-          url: this.api.swap.deleteSwap,
+          url: that.api.swap.deleteSwap,
           method: "post",
           data: {
             groupId: that.selected,
@@ -415,9 +431,7 @@ export default {
         });
     },
     //移动到
-    onMove() {
-
-    },
+    onMove() {},
     //div的右键点击
     divRightClick(event) {
       this.divMenuVisible = false;

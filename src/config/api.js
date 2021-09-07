@@ -15,5 +15,6 @@ export default {
         addGroup: '/fospot/counter/api/contract_group/add', //点击新建进行合约组新增
         updateGroup: '/fospot/counter/api/contract_group/update_name', // 点击编辑进行合约组名修改
         removeGroup: '/fospot/counter/api/contract_group/remove', //点击删除进行合约组删除
+        sortGroup: '/fospot/counter/api/contract_group/change_order', //拖动合约进行排序
     }
 }
