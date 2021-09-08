@@ -146,7 +146,7 @@
         style="width: 100%; color: #fff"
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
-        @row-click="onDblClick"
+        @row-click="onClick"
       >
         <el-table-column width="50" align="center">
           <template slot="header">
@@ -381,8 +381,8 @@ export default {
       this.selected = val;
       this.getTableData();
     },
-    //行双击
-    onDblClick(row, column, event) {
+    //行单击
+    onClick(row, column, event) {
       EventBus.$emit("order", row);
       this.activeRow = row;
     },

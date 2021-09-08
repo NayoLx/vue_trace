@@ -149,44 +149,61 @@
     <el-dialog
       title="选择合约"
       :visible.sync="swapVisible"
-      width="40%"
+      width="50%"
       height="500"
       v-dialogDrag
     >
       <template>
-        <div style="choose-swap">
+        <div class="choose-swap">
           <el-row>
-            <el-col :span="6">
-              <div style="choose-swap-tree">
+            <el-col :span="6" style="padding-right: 10px">
+              <div class="choose-swap-tree">
                 <p>市场/品种</p>
-                <div style="choose-swap-tree-list">
-                  <el-tree :data="swap_tree" :props="defaultProps" accordion>
+                <div class="choose-swap-tree-list">
+                  <el-tree
+                    :data="swap_tree"
+                    :props="defaultProps"
+                    accordion
+                    @node-click="handleNodeClick"
+                    :highlight-current="true"
+                  >
                   </el-tree>
                 </div>
               </div>
             </el-col>
             <el-col :span="18">
-              <div>
+              <div class="choose-swap-tree">
                 <p>合约</p>
-                <el-table :data="tableData" style="width: 100%" height="250px">
-                  <el-table-column prop="code" label="交易代码">
+                <el-table
+                  :data="tableData"
+                  style="width: 100%"
+                  height="250px"
+                  :header-cell-style="cellStyle"
+                  :cell-style="rowStyle"
+                  @row-click="onClick"
+                >
+                  <el-table-column prop="contractCode" label="交易代码">
                   </el-table-column>
-                  <el-table-column prop="head" label="默认下单手数">
+                  <el-table-column prop="minimumPrice" label="默认下单手数">
                   </el-table-column>
-                  <el-table-column prop="code" label="交易代码">
+                  <el-table-column prop="contractName" label="交易代码">
                   </el-table-column>
                 </el-table>
               </div>
             </el-col>
           </el-row>
           <div class="choose-swap-footer">
-            <p>市场/品种</p>
-            <div>
+            <p class="choose-swap-footer-title">市场/品种</p>
+            <div class="choose-swap-footer-con">
               <p>合约名称 每手xx吨 交易所</p>
               <p>报价单位：元（人民币）/吨</p>
             </div>
-            <div>
-              <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
+            <div class="choose-swap-footer-btn">
+              <el-button
+                type="primary"
+                plain
+                size="mini"
+                @click="onChooseSubmit()"
                 >确定</el-button
               >
               <el-button size="mini">取消</el-button>
@@ -196,18 +213,20 @@
       </template>
     </el-dialog>
 
-    <el-dialog title="操作确认"
+    <el-dialog
+      title="操作确认"
       :visible.sync="submitVisible"
       width="30%"
-      v-dialogDrag>
+      v-dialogDrag
+    >
       <template>
         <div>
           <p>确定下单 吗？</p>
           <div></div>
           <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
-                >确定</el-button
-              >
-              <el-button size="mini">取消</el-button>
+            >确定</el-button
+          >
+          <el-button size="mini">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -215,20 +234,134 @@
 </template>
 
 <style lang="less">
-.choose-swap {
-  width: 100%;
-  min-height: 500px;
-
-  .choose-swap-tree {
-    height: 200px;
-  }
-}
 .main-order {
   overflow-y: scroll;
   overflow-x: hidden;
   height: 100%;
   background-color: #1c1d21;
   color: #ffffff;
+
+  .el-table .cell {
+    color: #ffffff;
+  }
+
+  .choose-swap {
+    width: 100%;
+
+    .choose-swap-tree {
+      p {
+        margin: 10px 0;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .el-table tbody tr:hover > td {
+    background-color: #4286f483 !important;
+  }
+
+  .choose-swap-footer {
+    margin-top: 20px;
+
+    .choose-swap-footer-title {
+      margin: 10px 0;
+      color: #ffffff;
+    }
+
+    .choose-swap-footer-con {
+      width: 100%;
+      padding: 5px;
+      color: #ffffff;
+      border: 2px solid #27282b;
+      background-color: #323337;
+    }
+
+    .choose-swap-footer-btn {
+      margin-top: 20px;
+      text-align: end;
+    }
+  }
+
+  .el-table {
+    border: 2px solid #27282b;
+  }
+
+  .el-table td,
+  .el-table th {
+    padding: 5px 0;
+  }
+
+  .el-table td,
+  .el-table th.is-leaf {
+    border: 1px solid #797979;
+  }
+
+  .el-table--enable-row-transition .el-table__body td {
+    border: 1px solid #797979;
+  }
+
+  .el-table--scrollable-x .el-table__body-wrapper {
+    background-color: #2d2d31;
+  }
+
+  .el-table__empty-block {
+    background-color: #323337;
+  }
+
+  .el-table,
+  .el-table__expanded-cell {
+    background-color: #323337;
+  }
+
+  .el-table::before {
+    height: 0px;
+  }
+
+  .el-tree-node:focus > .el-tree-node__content {
+    background-color: #4286f483;
+  }
+
+  .el-tree--highlight-current
+    .el-tree-node.is-current
+    > .el-tree-node__content {
+    background-color: #4286f483;
+  }
+
+  .el-tree-node__label {
+    color: #ffffff;
+  }
+
+  .el-tree-node__content:hover {
+    background-color: #4286f483;
+  }
+
+  .el-tree {
+    height: 250px;
+    background-color: #323337;
+    border: 2px solid #27282b;
+    overflow-x: auto;
+  }
+
+  .el-dialog {
+    background-color: #2d2d31;
+  }
+
+  .el-dialog__title {
+    color: #ffffff;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #ffffff;
+  }
+
+  .el-dialog__header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #797979;
+  }
+
+  .el-dialog__headerbtn {
+    top: 15px;
+  }
 
   .el-input--suffix .el-input__inner {
     background-color: #1c1d21;
@@ -319,38 +452,7 @@ export default {
   data() {
     return {
       tableData: [],
-      swap_tree: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 1-1",
-            },
-          ],
-        },
-        {
-          label: "一级 2",
-          children: [
-            {
-              label: "二级 2-1",
-            },
-            {
-              label: "二级 2-2",
-            },
-          ],
-        },
-        {
-          label: "一级 3",
-          children: [
-            {
-              label: "二级 3-1",
-            },
-            {
-              label: "二级 3-2",
-            },
-          ],
-        },
-      ],
+      swap_tree: [],
       defaultProps: {
         children: "children",
         label: "label",
@@ -376,6 +478,7 @@ export default {
         openFlag: "",
         hedgeFlag: "",
       },
+      activeRow: "",
       states: [
         "Alabama",
         "Alaska",
@@ -438,16 +541,67 @@ export default {
       return { value: `${item}`, label: `${item}` };
     });
     //使用前，先解绑order，以防重复绑定
-    EventBus.$off('order');
-    EventBus.$on('order', (msg) => {
-      console.log('收到收到');
+    EventBus.$off("order");
+    EventBus.$on("order", (msg) => {
+      console.log("收到收到");
       console.log(msg.contractName);
     });
   },
   methods: {
     init() {
       console.log(this.user);
+      this.setSwapTree();
     },
+    onClick(row, column, event) {
+      this.activeRow = row;
+    },
+    //市场/品种
+    setSwapTree() {
+      let exchanges = this.$session.get("exchange");
+      let contract = this.$session.get("contract");
+      let product = this.$session.get("product");
+      this.swap_tree = [];
+      for (var i = 0; i < exchanges.length; i++) {
+        var exchange = exchanges[i];
+        var product_l = [];
+        var product_l = product.filter((item) => {
+          return item.exchange.id == exchange.id;
+        });
+        let children = product_l.map((item) => {
+          return {
+            label: item.name,
+          };
+        });
+        this.swap_tree.push({
+          label: exchange.memo,
+          children: children,
+        });
+      }
+    },
+    handleNodeClick(data) {
+      let products = this.$session.get("product");
+      var product = products.find((item) => {
+        return item.name == data.label;
+      });
+      if (product != null && product != undefined) {
+        let contract = this.$session.get("contract");
+        var table = contract.filter((item) => {
+          return item.product.id == product.id;
+        });
+        console.log(table);
+        this.tableData = table;
+      }
+    },
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      return "background-color: #2d2d31; color: #fff; height: 20px";
+    },
+    rowStyle({ row, column, rowIndex, columnIndex }) {
+      if (row == this.activeRow) {
+        return "background-color: #4286f4 !important;";
+      }
+      return "background-color: #1c1d21; cursor: pointer;";
+    },
+
     changeReadOnly() {
       this.isReadOnly = !this.isReadOnly;
     },
