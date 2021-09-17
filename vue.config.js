@@ -1,4 +1,9 @@
 module.exports = {
+  pluginOptions: {
+    electronBuilder: {
+      nodeIntegration: true
+    }
+  },
   devServer: {
     port: 8081,
     disableHostCheck: true,
@@ -7,7 +12,7 @@ module.exports = {
     hotOnly: true, // 是否开启热更新。
     proxy: {
       "/api": {
-        target: "http://172.31.41.83:8081/", // 你的API服务器地址
+        target: "http://39.108.117.149:8081/", // 你的API服务器地址
         changeOrigin: true,
         pathRewrite: { "^/api": "/" }
       },

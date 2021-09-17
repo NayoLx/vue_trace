@@ -1,6 +1,6 @@
 <template>
   <div class="manage fillcontain">
-        <div>
+        <div style="-webkit-app-region: drag;">
           <el-menu
           :default-active="defaultActive"
           style="min-width: 100%; overflow-x:auto"
@@ -10,7 +10,7 @@
           unique-opened
           router
         >
-          <el-menu-item index="/main/btc_usdt">自选</el-menu-item>
+          <el-menu-item index="/main">自选</el-menu-item>
           <el-menu-item index="/other/btc_usdt">期货</el-menu-item>
         </el-menu>
         </div>
@@ -24,7 +24,7 @@
 export default {
   data() {
     return {
-      defaultActive: '/main/btc_usdt',
+      defaultActive: '/main',
     }
   },
   computed: {

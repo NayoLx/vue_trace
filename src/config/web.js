@@ -5,11 +5,12 @@
  */
 import axios from 'axios';
 import { Loading, Message } from 'element-ui';
+const { ipcRenderer } = require("electron");
 
 const getBaseUrl = (env) => {
     let base = {
         production: '/',
-        development: 'http://localhost:8081',
+        development: 'http://39.108.117.149:8081',
         test: '',
     }[env];
     if (!base) {
@@ -20,7 +21,7 @@ const getBaseUrl = (env) => {
 
 class web {
     constructor() {
-        this.baseUrl = '';
+        this.baseUrl = 'http://39.108.117.149:8081';
         this.timeout = 10000;
         this.withCredentials = true;
     }
@@ -50,6 +51,7 @@ class web {
                         });
                         setTimeout(function () {
                             location.replace('/'); //返回登录    
+                            ipcRenderer.send("resize-window", 300, 480);
                         }, 1000)
                         break;
                     case 404:

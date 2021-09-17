@@ -5,7 +5,7 @@
     </div>
     <Form :model="form" label-position="top">
       <div class="form-row">
-        <div class="form-row-item">
+        <div class="form-row-item" style="margin-right: 10px">
           <div class="form-row-item-title-f">
             <div>
               <span>合约</span
@@ -206,7 +206,7 @@
                 @click="onChooseSubmit()"
                 >确定</el-button
               >
-              <el-button size="mini">取消</el-button>
+              <el-button size="mini" @click="onSwapClose()">取消</el-button>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@
           <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
             >确定</el-button
           >
-          <el-button size="mini">取消</el-button>
+          <el-button size="mini" @click="onClose()">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -258,6 +258,10 @@
 
   .el-table tbody tr:hover > td {
     background-color: #4286f483 !important;
+  }
+
+  .el-input.is-disabled .el-input__inner {
+    background-color: #1c1d21;
   }
 
   .choose-swap-footer {
@@ -446,6 +450,7 @@
 
 <script>
 import { EventBus } from "@/utils/event_bus.js";
+import { ShowToast } from "@/utils/utils.js";
 
 export default {
   props: ["user"],
@@ -463,11 +468,11 @@ export default {
       isReadOnly: false,
       loading: false,
       options: [],
-      sides: ["1", "2"],
-      tifs: ["1", "2"],
-      ordTypes: ["1", "2"],
-      openFlags: ["1", "2"],
-      hedgeFlags: ["1", "2"],
+      sides: ["买入", "卖出"],
+      tifs: ["DAY", "GTC", "GTD", "FOK", "FAK", "IOC"],
+      ordTypes: ["Limit", "Market", "Stop"],
+      openFlags: ["开仓", "平仓", "平今", "自动"],
+      hedgeFlags: ["投机", "套保"],
       form: {
         swap: "",
         price: 0,
@@ -540,11 +545,22 @@ export default {
     this.list = this.states.map((item) => {
       return { value: `${item}`, label: `${item}` };
     });
-    //使用前，先解绑order，以防重复绑定
-    EventBus.$off("order");
+    (this.form = {
+      swap: "",
+      price: 0,
+      head: 1,
+      side: "买入",
+      tif: "DAY",
+      ordType: "Limit",
+      openFlag: "开仓",
+      hedgeFlag: "投机",
+    }),
+      //使用前，先解绑order，以防重复绑定
+      EventBus.$off("order");
     EventBus.$on("order", (msg) => {
       console.log("收到收到");
       console.log(msg.contractName);
+      this.form.swap = msg.contractName;
     });
   },
   methods: {
@@ -558,38 +574,52 @@ export default {
     //市场/品种
     setSwapTree() {
       let exchanges = this.$session.get("exchange");
-      let contract = this.$session.get("contract");
       let product = this.$session.get("product");
-      this.swap_tree = [];
-      for (var i = 0; i < exchanges.length; i++) {
-        var exchange = exchanges[i];
-        var product_l = [];
-        var product_l = product.filter((item) => {
-          return item.exchange.id == exchange.id;
-        });
-        let children = product_l.map((item) => {
-          return {
-            label: item.name,
-          };
-        });
-        this.swap_tree.push({
-          label: exchange.memo,
-          children: children,
+      if (product != null && exchanges != null) {
+        this.swap_tree = [];
+        for (var i = 0; i < exchanges.length; i++) {
+          var exchange = exchanges[i];
+          var product_l = [];
+          var product_l = product.filter((item) => {
+            return item.exchange.id == exchange.id;
+          });
+          let children = product_l.map((item) => {
+            return {
+              label: item.name,
+            };
+          });
+          this.swap_tree.push({
+            label: exchange.memo,
+            children: children,
+          });
+        }
+      } else {
+        ShowToast({
+          msg: "缓存已失效，请重新登陆",
+          isBack: true,
         });
       }
     },
+    //选择品种
     handleNodeClick(data) {
       let products = this.$session.get("product");
-      var product = products.find((item) => {
-        return item.name == data.label;
-      });
-      if (product != null && product != undefined) {
-        let contract = this.$session.get("contract");
-        var table = contract.filter((item) => {
-          return item.product.id == product.id;
+      if (products != null) {
+        var product = products.find((item) => {
+          return item.name == data.label;
         });
-        console.log(table);
-        this.tableData = table;
+        if (product != null && product != undefined) {
+          let contract = this.$session.get("contract");
+          var table = contract.filter((item) => {
+            return item.product.id == product.id;
+          });
+          console.log(table);
+          this.tableData = table;
+        }
+      } else {
+        ShowToast({
+          msg: "缓存已失效，请重新登陆",
+          isBack: true,
+        });
       }
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
@@ -609,8 +639,13 @@ export default {
       this.submitVisible = true;
       console.log(this.form);
     },
+    onSwapClose() {
+      this.swapVisible = false;
+    },
     onChooseSubmit() {
-      console.log(this.form);
+      console.log(this.activeRow);
+      this.form.swap = this.activeRow.contractName;
+      this.onSwapClose();
     },
     remoteMethod(query) {
       if (query !== "") {

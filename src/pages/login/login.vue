@@ -1,7 +1,7 @@
 <template>
   <div class="login fillcontain">
     <transition name="form-fade" mode="in-out">
-      <div class="center_container">
+      <div class="center_container" >
         <section class="form_contianer">
           <div class="manage_tip">
             <p>交易系统</p>
@@ -127,7 +127,7 @@ export default {
               });
               setTimeout(() => {
                 loading.close();
-                this.$router.push("/main/btc_usdt");
+                this.$router.push("/main");
                 this.user.token = "123";
                 this.$session.set("isKeep", this.isKeep);
                 this.$store.dispatch("login", this.user);
@@ -143,42 +143,45 @@ export default {
     },
 
     async initExchange() {
-      let exchange = await web.request({
-        url: "/fospot/counter/api/index/exchange",
-        method: "get",
-      });
-      if (exchange != null && exchange.data != null) {
-        this.$session.set("exchange", exchange.data.data);
-        console.log("initExchange");
-        console.log(exchange);
+      let exchange = this.$session.get("exchange");
+      if (exchange == null) {
+        exchange = await web.request({
+          url: "/fospot/counter/api/index/exchange",
+          method: "get",
+        });
+        if (exchange != null && exchange.data != null) {
+          this.$session.set("exchange", exchange.data.data, 1);
+        }
       }
     },
 
     async initProduct() {
-      let product = await web.request({
-        url: "/fospot/counter/api/index/product",
-        method: "get",
-      });
-      if (product != null && product.data != null) {
-        this.$session.set("product", product.data.data);
-        console.log("product");
-        console.log(product);
+      let product = this.$session.get("product");
+      if (product == null) {
+        product = await web.request({
+          url: "/fospot/counter/api/index/product",
+          method: "get",
+        });
+        if (product != null && product.data != null) {
+          this.$session.set("product", product.data.data, 1);
+        }
       }
     },
 
     async initContract() {
-      let contract = await web.request({
-        url: "/fospot/counter/api/index/contract",
-        method: "get",
-      });
-      if (
-        contract != null &&
-        contract.data != null &&
-        contract.data.data != null
-      ) {
-        this.$session.set("contract", contract.data.data);
-        console.log("contract");
-        console.log(contract);
+      let contract = this.$session.get("contract");
+      if (contract == null) {
+        contract = await web.request({
+          url: "/fospot/counter/api/index/contract",
+          method: "get",
+        });
+        if (
+          contract != null &&
+          contract.data != null &&
+          contract.data.data != null
+        ) {
+          this.$session.set("contract", contract.data.data, 1);
+        }
       }
     },
 
@@ -248,6 +251,7 @@ export default {
   padding-top: 30px;
   padding-bottom: 40px;
   width: 100%;
+  -webkit-app-region: drag; // 可拖动
   display: -webkit-flex;
   display: flex;
   -webkit-align-items: center;

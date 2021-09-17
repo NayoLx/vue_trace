@@ -1,6 +1,13 @@
 export default {
     common: {
         login: '/fospot/counter/api/login',
+        tradeAccount: '/fospot/counter/api/index/trade_account', //用户的所有交易帐户查询
+        accountDailyFund: '/fospot/counter/api/index/account_daily_fund', //所有交易账户日资金状况
+        accountLimit: '/fospot/counter/api/index/account_limit', //所有交易帐户额度
+        tradeCalendar: '/fospot/counter/api/index/trade_calendar', //所有交易日历
+        tradeTimeInfo: '/fospot/counter/api/index/trade_time_info', //所有交易时间
+        exchangeSettleParam: '/fospot/counter/api/index/exchange_settle_param', //所有交易所结算参数
+        exchangeTradeParam: '/fospot/counter/api/index/exchange_trade_param', //所有交易所交易参数
     },
     swap: {
         contract: '/fospot/counter/api/index/contract', //所有合约查询

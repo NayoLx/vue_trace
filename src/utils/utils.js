@@ -1,3 +1,6 @@
+import { Message } from "element-ui";
+const { ipcRenderer } = require("electron");
+
 export function stringify(data) {
     let ret = ''
     for (const it in data) {
@@ -7,6 +10,20 @@ export function stringify(data) {
     return ret
 }
 
+export function ShowToast({ msg, isBack }) {
+    Message({
+        type: "error",
+        message: msg,
+    });
+    if (isBack == true) {
+        setTimeout(function () {
+            ipcRenderer.send("resize-window", 300, 480);
+            location.replace("/"); //返回登录
+        }, 1000);
+    }
+}
+
 export default {
-    stringify
+    stringify,
+    ShowToast,
 }

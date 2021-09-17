@@ -184,6 +184,7 @@
 
 <script>
 import web from "@/config/web";
+import { Loading, Message } from 'element-ui';
 
 export default {
   props: ["groundId", "swapGroup", "onClose"],
@@ -211,15 +212,25 @@ export default {
     getOptions() {
       let exchange = this.$session.get("exchange");
       let contract = this.$session.get("contract");
-      this.selectGroup = this.swapGroup[0];
-      this.options = exchange;
-      this.value = this.options[0].memo;
-      for (var i = 0; i < contract.length; i++) {
-        if (contract[i].exchange.memo == this.value) {
-          this.list.push(contract[i]);
+      if (exchange != null && contract != null) {
+        this.selectGroup = this.swapGroup[0];
+        this.options = exchange;
+        this.value = this.options[0].memo;
+        for (var i = 0; i < contract.length; i++) {
+          if (contract[i].exchange.memo == this.value) {
+            this.list.push(contract[i]);
+          }
         }
+        this.contractList = this.selectGroup.contractData;
+      } else {
+        Message({
+          type: "error",
+          message: "缓存已失效，请重新登陆",
+        });
+        setTimeout(function () {
+          location.replace("/"); //返回登录
+        }, 1000);
       }
-      this.contractList = this.selectGroup.contractData;
     },
     onChangeExchange() {
       let contract = this.$session.get("contract");
@@ -453,10 +464,8 @@ export default {
       }
     },
   },
-  created() {
-    this.init();
-  },
   mounted() {
+    this.init();
     this.searchList = this.list;
   },
 };

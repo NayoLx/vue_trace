@@ -9,7 +9,7 @@
     <div class="container" v-if="this.type == true">
       <div class="item">
         <span class="item-title">卖五</span
-        ><span class="item-value">{{user}}</span><span class="item-key">15</span>
+        ><span class="item-value">{{user.account}}</span><span class="item-key">15</span>
       </div>
       <div class="item">
         <span class="item-title">买一</span

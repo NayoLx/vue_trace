@@ -23,14 +23,14 @@
     <div class="row">
       <div class="row-left">
         <Dropdown trigger="click" style="margin: 0 20px">
-          {{ account }}
+          {{ account.account }}
           <Icon type="ios-arrow-down"></Icon>
           <DropdownMenu slot="list">
             <DropdownItem
               v-for="item in myAccount"
-              v-bind:key="item"
+              v-bind:key="item.id"
               @click.native="changeAccount(item)"
-              >{{ item }}</DropdownItem
+              >{{ item.account }}</DropdownItem
             >
           </DropdownMenu>
         </Dropdown>
@@ -65,10 +65,10 @@
       </div>
     </div>
     <div class="row-order">
-      <div class="row-order-item" style="width: 300px">
+      <div class="row-order-item" style="min-width: 180px">
         <DiskPort :user="account"></DiskPort>
       </div>
-      <div class="row-order-item" style="width: 700px">
+      <div class="row-order-item" style="min-width: 400px">
         <Order :user="account"></Order>
       </div>
       <div class="row-order-item" style="width: 100%">
@@ -204,6 +204,8 @@ import DiskPort from "@/components/swap/disk_port";
 import Position from "@/components/swap/position";
 import PositionH from "@/components/swap/position_history";
 import Entrust from "@/components/swap/entrust";
+import web from "@/config/web";
+const { ipcRenderer } = require("electron");
 
 export default {
   components: {
@@ -229,19 +231,74 @@ export default {
       split1: 0.5,
       selectedOrder: "self",
       showDetail: true,
-      account: "17875865869",
-      myAccount: ["17503002125", "17875865869"],
+      account: "",
+      myAccount: [],
     };
+  },
+  mounted() {
+    this.init();
+    ipcRenderer.send("resize-window", 1280, 900);
   },
   methods: {
     init() {
       var params = this.$route.params.pair;
-      var getUser = this.$userStore.getters.getUser;
       console.log(params);
-      console.log(getUser);
+      this.getAccount();
+      this.getTradTimeInfo();
+      this.getExchangeSettleParam();
+      this.getExchangeTradeParam();
     },
     handleDragDrop(name, newName, a, b, names) {
       this.tabList.splice(b, 1, ...this.tabList.splice(a, 1, this.tabList[b]));
+    },
+    //用户所有交易账户查询
+    getAccount() {
+      web
+        .request({
+          url: this.api.common.tradeAccount,
+          method: "get",
+        })
+        .then((res) => {
+          this.$session.set("account", res.data.data, 60);
+          this.myAccount = res.data.data;
+          this.account = this.myAccount[0];
+        });
+    },
+    //所有交易时间
+    getTradTimeInfo() {
+      web
+        .request({
+          url: this.api.common.tradeTimeInfo,
+          method: "get",
+        })
+        .then((res) => {
+          console.log("getTradTimeInfo");
+          console.log(res.data.data);
+        });
+    },
+    //所有交易所结算参数
+    getExchangeSettleParam() {
+      web
+        .request({
+          url: this.api.common.exchangeSettleParam,
+          method: "get",
+        })
+        .then((res) => {
+          console.log("exchangeSettleParam");
+          console.log(res.data.data);
+        });
+    },
+    //所有交易所交易参数
+    getExchangeTradeParam() {
+      web
+        .request({
+          url: this.api.common.exchangeTradeParam,
+          method: "get",
+        })
+        .then((res) => {
+          console.log("getExchangeTradeParam");
+          console.log(res.data.data);
+        });
     },
     changeOrder(str) {
       this.selectedOrder = str;

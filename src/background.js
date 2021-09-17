@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -16,26 +16,41 @@ async function createWindow() {
   // Create the browser window.
   Menu.setApplicationMenu(null);
   const win = new BrowserWindow({
-    width: 1280,
-    height: 900,
+    width: 300,
+    height: 480,
+    frame: false,
+    resizable: false,
     webPreferences: {
-      
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: true,
+      contextIsolation: false
     }
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+  ipcMain.on('resize-window', (event, width, height) => {
+    win.resizable = true;
+    win.setSize(width, height);
+    win.center();
+    win.resizable = false;
+  });
+
+  ipcMain.on('close', e =>
+    win.close()
+  );
+
+  ipcMain.on('minimize', e =>
+    win.minimize()
+  );
+
 }
 
 // Quit when all windows are closed.
