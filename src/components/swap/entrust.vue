@@ -1,6 +1,6 @@
 <style lang="less">
 .main-entrust {
-  height: 100%;
+  max-height: 300px;
   background-color: #1c1d21;
   color: #ffffff;
 
@@ -78,12 +78,13 @@
       <el-button size="mini" style="main-entrust-btn-item">全撤</el-button>
     </div>
     <el-table
-        height="200"
+        height="230"
         :data="tableData"
-        style="background-color: #1c1d21; color: #fff"
+        style="width:100%; background-color: #1c1d21; color: #fff"
         :header-cell-style="cellStyle"
         :cell-style="rowStyle"
       >
+      
         <el-table-column label="报单编号" prop="time" width="150">
         </el-table-column>
         <el-table-column label="合约" prop="symbol" width="150">
@@ -100,7 +101,15 @@
         </el-table-column>
         <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
         </el-table-column>
-        <el-table-column label="详细状态" prop="operate"> </el-table-column>
+        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="卖量成交手数" prop="tradedAmount" width="150">
+        </el-table-column>
+        <el-table-column label="详细状态" prop="operate" width="150"> </el-table-column>
       </el-table>
   </div>
 </template>
@@ -246,6 +255,7 @@ export default {
         console.log(`Received message ${message} from topic ${messageTopic}`);
       });
     },
+
 
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return "background-color: #2d2d31; color: #fff; height: 20px";

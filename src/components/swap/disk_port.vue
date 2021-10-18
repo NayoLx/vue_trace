@@ -43,7 +43,7 @@
 
 <style lang="less" scoped>
 .main {
-  height: 100%;
+  max-height: 300px;
   color: #fff;
   background-color: #1c1d21;
 

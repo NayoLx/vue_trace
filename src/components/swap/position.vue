@@ -2,7 +2,7 @@
 .main-position {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100%;
+  max-height: 300px;
   background-color: #1c1d21;
   color: #ffffff;
 

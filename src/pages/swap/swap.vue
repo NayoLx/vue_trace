@@ -1,24 +1,14 @@
 <template>
-  <div class="fillcontain">
-    <div class="swap">
-      <div class="swap-handler">
-        <span
-          @click="changeOrder('self')"
-          :class="{ active: selectedOrder === 'self' }"
-          >{{ $t("swap.self") }}</span
-        >
-        <span
-          @click="changeOrder('self_model')"
-          :class="{ active: selectedOrder === 'self_model' }"
-          >{{ $t("swap.self_model") }}</span
-        >
-      </div>
-      <div v-if="selectedOrder === 'self'">
-        <SelfSwap :user="account"></SelfSwap>
-      </div>
-      <div v-else>
-        <SelfSwapM :user="account"></SelfSwapM>
-      </div>
+  <div class="swap_o">
+    <div class="swap_o_tabs">
+      <el-tabs v-model="selectedOrder" @tab-click="changeOrder">
+        <el-tab-pane label="报价表" name="self"
+          ><SelfSwap :user="account"></SelfSwap
+        ></el-tab-pane>
+        <el-tab-pane label="期权报价表" name="s_self"
+          ><SelfSwapM :user="account"></SelfSwapM
+        ></el-tab-pane>
+      </el-tabs>
     </div>
     <div class="row">
       <div class="row-left">
@@ -64,27 +54,22 @@
         <i class="el-icon-s-tools" @click="setVisible = true" />
       </div>
     </div>
-    <div class="row-order">
-      <div class="row-order-item" style="min-width: 180px">
-        <DiskPort :user="account"></DiskPort>
-      </div>
-      <div class="row-order-item" style="min-width: 400px">
-        <Order :user="account"></Order>
-      </div>
-      <div class="row-order-item" style="width: 100%">
-        <Entrust :user="account"></Entrust>
-      </div>
-    </div>
-    <div class="row-order">
-      <Split v-model="split1">
-        <div slot="left" style="height: 100%; border: 1px solid #000000">
-          <Position></Position>
-        </div>
-        <div slot="right" style="height: 100%; border: 1px solid #000000">
-          <PositionH></PositionH>
-        </div>
-      </Split>
-    </div>
+    <el-row :gutter="5">
+      <el-col :xs="4" :sm="4" :md="3" :lg="3" :xl="2"
+        ><DiskPort :user="account"></DiskPort
+      ></el-col>
+      <el-col :xs="9" :sm="9" :md="7" :lg="6" :xl="5">
+        <Order :user="account"></Order
+      ></el-col>
+      <el-col :xs="11" :sm="11" :md="14" :lg="15" :xl="17"
+        ><Entrust :user="account"></Entrust
+      ></el-col>
+    </el-row>
+    <el-row :gutter="5" style="border-top: 1px solid #797979">
+      <el-col :span="12"><Position></Position></el-col>
+      <el-col :span="12"><PositionH></PositionH></el-col>
+    </el-row>
+  
     <el-dialog
       title="交易设置"
       :visible.sync="setVisible"
@@ -205,7 +190,6 @@ import Position from "@/components/swap/position";
 import PositionH from "@/components/swap/position_history";
 import Entrust from "@/components/swap/entrust";
 import web from "@/config/web";
-const { ipcRenderer } = require("electron");
 
 export default {
   components: {
@@ -237,7 +221,6 @@ export default {
   },
   mounted() {
     this.init();
-    ipcRenderer.send("resize-window", 1280, 900);
   },
   methods: {
     init() {
@@ -300,8 +283,9 @@ export default {
           console.log(res.data.data);
         });
     },
-    changeOrder(str) {
-      this.selectedOrder = str;
+    changeOrder(tab, event) {
+      console.log(tab.$options.propsData.name);
+      this.selectedOrder = tab.$options.propsData.name;
     },
     changeAccount(str) {
       console.log(str);
@@ -319,56 +303,62 @@ export default {
 </style>
 
 <style lang="less">
-.fillcontain {
-  .swap {
-    .swap-handler {
-      background-color: #192330;
-      font-size: 0;
+html body .swap_o {
+  height: 100%;
+  background-color: #323337;
+}
 
-      // line-height: 38px;
-      > span {
-        padding: 0 20px;
-        font-size: 14px;
-        display: inline-block;
-        cursor: pointer;
-        line-height: 40px;
-        color: #fff;
+.swap_o {
+  padding: 6px;
 
-        &.active {
-          color: #ffffff;
-          background-color: #525b68;
-        }
-
-        &:first-child {
-          border-top-left-radius: 0px;
-        }
-
-        &:last-child {
-          border-top-right-radius: 0px;
-        }
-      }
-    }
-  }
-
-  .el-dialog {
-    background-color: #2d2d31;
-  }
-
-  .el-dialog__title {
+  .el-tabs__item.is-active {
+    background-color: #7c7f80;
     color: #ffffff;
   }
 
-  .el-dialog__headerbtn .el-dialog__close {
+  .el-tabs__content {
+    position: unset;
+  }
+
+  .el-tabs__active-bar {
+    width: 0 !important;
+  }
+
+  .el-tabs__header {
+    margin: 0;
+  }
+
+  .el-tabs__item {
     color: #ffffff;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 20px !important;
   }
 
-  .el-dialog__header {
-    padding: 10px 20px;
-    border-bottom: 1px solid #797979;
+  .el-tabs__nav-scroll {
+    background-color: rgba(50, 51, 55, 0.9);
   }
 
-  .el-dialog__headerbtn {
-    top: 15px;
+  .el-tabs__nav-wrap::after {
+    height: 0px;
+  }
+
+  .el-col {
+    border-radius: 4px;
+  }
+
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
   }
 
   .row {
@@ -408,15 +398,26 @@ export default {
     }
   }
 
-  .row-order {
-    display: flex;
-    height: 300px;
-    align-items: center;
+  
+  .el-dialog {
+    background-color: #2d2d31;
+  }
 
-    .row-order-item {
-      height: 100%;
-      border: 0.5px solid #000000;
-    }
+  .el-dialog__title {
+    color: #ffffff;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #ffffff;
+  }
+
+  .el-dialog__header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #797979;
+  }
+
+  .el-dialog__headerbtn {
+    top: 15px;
   }
 
   .setting {

@@ -5,7 +5,7 @@
  */
 import axios from 'axios';
 import { Loading, Message } from 'element-ui';
-const { ipcRenderer } = require("electron");
+// const { ipcRenderer } = require("electron");
 
 const getBaseUrl = (env) => {
     let base = {
@@ -51,7 +51,7 @@ class web {
                         });
                         setTimeout(function () {
                             location.replace('/'); //返回登录    
-                            ipcRenderer.send("resize-window", 300, 480);
+                            // ipcRenderer.send("resize-window", 300, 480);
                         }, 1000)
                         break;
                     case 404:

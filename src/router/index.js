@@ -4,7 +4,6 @@ import login from '@/pages/login/login'
 import main from '@/pages/main/main'
 import swap from '@/pages/swap/swap'
 import other from '@/pages/other/other'
-import selfSwap from '@/components/swap/self_swap'
 
 Vue.use(Router)
 
