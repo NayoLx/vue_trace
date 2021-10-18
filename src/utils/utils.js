@@ -1,5 +1,5 @@
 import { Message } from "element-ui";
-// const { ipcRenderer } = require("electron");
+const { ipcRenderer } = require("electron");
 
 export function stringify(data) {
     let ret = ''
@@ -17,7 +17,7 @@ export function ShowToast({ msg, isBack }) {
     });
     if (isBack == true) {
         setTimeout(function () {
-            // ipcRenderer.send("resize-window", 300, 480);
+            ipcRenderer.send("resize-window", 300, 480);
             location.replace("/"); //返回登录
         }, 1000);
     }

@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-// import { ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 export default {
   data() {
     return {
@@ -29,7 +29,7 @@ export default {
     };
   },
   mounted() {
-    // ipcRenderer.send("resize-window", 1280, 900);
+    ipcRenderer.send("resize-window", 1280, 900);
   },
   computed: {},
 };
