@@ -217,19 +217,16 @@ export default {
         this.options = exchange;
         this.value = this.options[0].memo;
         for (var i = 0; i < contract.length; i++) {
-          if (contract[i].exchange.memo == this.value) {
+          if (contract[i].product.exchange.memo == this.value) {
             this.list.push(contract[i]);
           }
         }
         this.contractList = this.selectGroup.contractData;
       } else {
-        Message({
-          type: "error",
-          message: "缓存已失效，请重新登陆",
+        ShowToast({
+          msg: "缓存已失效，请重新登陆",
+          isBack: true,
         });
-        setTimeout(function () {
-          location.replace("/"); //返回登录
-        }, 1000);
       }
     },
     onChangeExchange() {
@@ -365,8 +362,6 @@ export default {
       return "background-color: #1c1d21";
     },
     search() {
-      console.log("searchKey");
-      console.log(this.searchKey);
       this.searchList = this.list.filter(
         (item) => item.contractName.indexOf(this.searchKey) >= 0
       );

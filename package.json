@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.13.2",
+    "ffi-napi": "^4.0.3",
     "jquery": "^3.6.0",
     "jqwidgets-scripts": "12.1.2",
     "less": "3.0.0",

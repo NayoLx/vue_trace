@@ -565,7 +565,6 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.user);
       this.setSwapTree();
     },
     onClick(row, column, event) {

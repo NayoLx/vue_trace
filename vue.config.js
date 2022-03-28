@@ -1,7 +1,8 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true
+      nodeIntegration: true,
+	  externals: ['ffi-napi', 'ref-napi']
     }
   },
   devServer: {
@@ -12,7 +13,7 @@ module.exports = {
     hotOnly: true, // 是否开启热更新。
     proxy: {
       "/api": {
-        target: "http://39.108.117.149:8081/", // 你的API服务器地址
+        target: "http://39.108.117.149:8081/", // 
         changeOrigin: true,
         pathRewrite: { "^/api": "/" }
       },

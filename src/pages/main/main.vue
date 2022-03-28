@@ -11,7 +11,7 @@
         router
       >
         <el-menu-item index="/main">自选</el-menu-item>
-        <el-menu-item index="/other/btc_usdt">期货</el-menu-item>
+        <!-- <el-menu-item index="/other/btc_usdt"></el-menu-item> -->
       </el-menu>
     </div>
     <keep-alive v-if="$route.meta.keepAlive">
@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 export default {
   data() {
     return {
@@ -29,7 +29,7 @@ export default {
     };
   },
   mounted() {
-    ipcRenderer.send("resize-window", 1280, 900);
+    // ipcRenderer.send("resize-window", 1280, 900);
   },
   computed: {},
 };
@@ -38,7 +38,7 @@ export default {
 <style lang="less">
 @import "../../style/mixin";
 .manage {
-  width: 100%;
+  min-width: 80rem;
 }
 
 .manage_tab {

@@ -13,6 +13,8 @@ const state = {
         password: '',
         token: '',
         server: '',
+		account: '',
+		accounts: [],
     },
     isKeep: false,
 }
@@ -44,6 +46,9 @@ const mutations = {
     navigate(state, nav) {
         state.activeNav = nav;
     },
+	changeAccount(state, nav) {
+		state.user.account = nav;
+	}
 }
 
 //通过actions触发mutattions里的方法
@@ -52,6 +57,9 @@ const actions = {
         console.log(payload);
         context.commit('setUser', payload);
     },
+	changeAccount(context, payload) {
+		context.commit('changeAccount', payload);
+	},
     loginOut(context) {
         context.commit('loginOut');
     }
