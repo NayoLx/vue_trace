@@ -216,17 +216,27 @@
     <el-dialog
       title="操作确认"
       :visible.sync="submitVisible"
-      width="30%"
+      width="300px"
       v-dialogDrag
     >
       <template>
-        <div>
-          <p>确定下单 吗？</p>
-          <div></div>
-          <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
-            >确定</el-button
-          >
-          <el-button size="mini" @click="onClose()">取消</el-button>
+        <div class="order_submit">
+          <p class="order_title">确定下单 <span class="order_tip">{{form.swap}}</span> 吗？</p>
+          <div class="order_list">
+			  <span class="order_child">{{form.openFlag}}</span>
+			  <span class="order_child">{{form.price}}</span>
+			  <span class="order_child">{{form.side}}</span>
+			  <span class="order_child">{{form.head}}手</span>
+			  <span class="order_child">{{form.hedgeFlag}}</span>
+			  <span class="order_child">{{form.ordType}}</span>
+		  </div>
+          <div class="order_btn">
+			  <el-checkbox v-model="checked">不在提醒</el-checkbox>
+			  <el-button type="primary" plain size="mini" @click="onChooseSubmit()"
+			    >确定</el-button
+			  >
+			  <el-button size="mini" @click="onClose()">取消</el-button>
+		  </div>
         </div>
       </template>
     </el-dialog>
@@ -444,6 +454,32 @@
       justify-content: space-between;
       padding: 5px 0;
     }
+  }
+  
+  //操作确认
+  .order_submit {
+	  color: #ffffff;
+	  
+	  .order_title {
+		  color: #797979;
+		  
+		  .order_tip {
+			  color: #ffffff;
+		  }
+	  }
+	  
+	  .order_list {
+		  padding: 20px 0;
+		  
+		  
+		  .order_child {
+			  
+		  }
+	  }
+	  
+	  .order_btn {
+		  
+	  }
   }
 }
 </style>
