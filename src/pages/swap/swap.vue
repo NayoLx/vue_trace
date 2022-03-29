@@ -275,6 +275,7 @@
 </style>
 
 <style lang="less">
+	@import "../../style/col";
 	html body .swap_o {
 		height: 100%;
 		background-color: #323337;

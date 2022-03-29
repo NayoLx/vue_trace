@@ -1,29 +1,17 @@
 <style lang="less">
 	.main-position {
-		overflow-y: scroll;
 		overflow-x: hidden;
 		max-height: 300px;
 		background-color: #1c1d21;
 		color: #ffffff;
 
-		.title {
-			position: relative;
-			top: 0;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			background-color: #323337;
-			border-bottom: 1px solid #797979;
-			font-size: 11px;
-			position: sticky;
-			z-index: 10;
-			top: 0;
+		.swap_o .el-tabs__nav-scroll {}
 
-			span {
-				padding: 4px 10px;
-				color: #ffffff;
-				background-color: #525b68;
-			}
+		.setting {
+			position: absolute;
+			top: 4px;
+			z-index: 10;
+			left: 47%;
 		}
 
 		.main-position-table {
@@ -85,41 +73,67 @@
 
 <template>
 	<div class="main-position">
-		<div class="title">
-			<span>持仓</span>
-		</div>
-		<div class="main-position-table">
-			<el-table height="200" :data="tableData" style="width: 100%; background-color: #1c1d21; color: #fff"
-				:header-cell-style="cellStyle" :cell-style="rowStyle">
-				<el-table-column label="品种" prop="time" width="150">
-				</el-table-column>
-				<el-table-column label="净持仓" width="150">
-					<el-table-column prop="symbol"></el-table-column>
-					<el-table-column prop="symbol"></el-table-column>
-				</el-table-column>
-				<el-table-column label="今买" width="150">
-					<el-table-column prop="type"></el-table-column>
-					<el-table-column prop="type"></el-table-column>
-				</el-table-column>
-				<el-table-column label="今卖" width="150">
-					<el-table-column prop="type"></el-table-column>
-					<el-table-column prop="type"></el-table-column>
-				</el-table-column>
-				<el-table-column label="最后成交价" prop="direction" width="150">
-				</el-table-column>
-				<el-table-column label="盈亏" prop="price" width="150">
-				</el-table-column>
-				<el-table-column label="持仓盈亏" prop="amount" width="150">
-				</el-table-column>
-				<el-table-column label="平仓盈亏" prop="turnover" width="150">
-				</el-table-column>
-			</el-table>
-		</div>
-
-		<div class="main-position-button">
-			<el-button size="mini" style="main-position-btn-item">平</el-button>
-			<el-button size="mini" style="main-position-btn-item">反手</el-button>
-		</div>
+		<el-tabs v-model="selectedPos" @tab-click="changePos">
+			<span class="setting">合并</span>
+			<el-tab-pane label="持仓" name="Pos">
+				<div class="main-position-table">
+					<el-table height="250" :data="tableData"
+						style="border-top: 1px solid #797979; width: 100%; background-color: #1c1d21; color: #fff"
+						:header-cell-style="cellStyle" :cell-style="rowStyle">
+						<el-table-column label="品种" prop="time" width="150">
+						</el-table-column>
+						<el-table-column label="净持仓" width="150">
+							<el-table-column prop="symbol"></el-table-column>
+							<el-table-column prop="symbol"></el-table-column>
+						</el-table-column>
+						<el-table-column label="今买" width="150">
+							<el-table-column prop="type"></el-table-column>
+							<el-table-column prop="type"></el-table-column>
+						</el-table-column>
+						<el-table-column label="今卖" width="150">
+							<el-table-column prop="type"></el-table-column>
+							<el-table-column prop="type"></el-table-column>
+						</el-table-column>
+						<el-table-column label="最后成交价" prop="direction" width="150">
+						</el-table-column>
+						<el-table-column label="盈亏" prop="price" width="150">
+						</el-table-column>
+						<el-table-column label="持仓盈亏" prop="amount" width="150">
+						</el-table-column>
+						<el-table-column label="平仓盈亏" prop="turnover" width="150">
+						</el-table-column>
+					</el-table>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane label="详细持仓" name="Pos_d">
+				<el-table height="250" :data="tableData"
+					style="border-top: 1px solid #797979; width: 100%; background-color: #1c1d21; color: #fff"
+					:header-cell-style="cellStyle" :cell-style="rowStyle">
+					<el-table-column label="品种" prop="time" width="150">
+					</el-table-column>
+					<el-table-column label="净持仓" width="150">
+						<el-table-column prop="symbol"></el-table-column>
+						<el-table-column prop="symbol"></el-table-column>
+					</el-table-column>
+					<el-table-column label="今买" width="150">
+						<el-table-column prop="type"></el-table-column>
+						<el-table-column prop="type"></el-table-column>
+					</el-table-column>
+					<el-table-column label="今卖" width="150">
+						<el-table-column prop="type"></el-table-column>
+						<el-table-column prop="type"></el-table-column>
+					</el-table-column>
+					<el-table-column label="最后成交价" prop="direction" width="150">
+					</el-table-column>
+					<el-table-column label="盈亏" prop="price" width="150">
+					</el-table-column>
+					<el-table-column label="持仓盈亏" prop="amount" width="150">
+					</el-table-column>
+					<el-table-column label="平仓盈亏" prop="turnover" width="150">
+					</el-table-column>
+				</el-table>
+			</el-tab-pane>
+		</el-tabs>
 	</div>
 </template>
 
@@ -128,6 +142,7 @@
 		data() {
 			let self = this;
 			return {
+				selectedPos: "Pos",
 				tableData: [{
 					name: "1",
 					time: "2",
@@ -143,6 +158,9 @@
 		},
 		created() {},
 		methods: {
+			changePos(tab, event) {
+				this.selectedPos = tab.$options.propsData.name;
+			},
 			cellStyle({
 				row,
 				column,

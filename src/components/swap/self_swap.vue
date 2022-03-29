@@ -90,42 +90,43 @@
 		.el-table tbody tr:hover>td {
 			background-color: #4286f483 !important;
 		}
+
+		.contextmenu__item {
+			display: block;
+			line-height: 34px;
+			text-align: center;
+		}
+
+		.contextmenu__item:not(:last-child) {
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		}
+
+		.menu {
+			position: absolute;
+			background-color: #fff;
+			/*height: 106px;*/
+			font-size: 12px;
+			color: #444040;
+			border-radius: 4px;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			border-radius: 3px;
+			border: 1px solid rgba(0, 0, 0, 0.15);
+			box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+			white-space: nowrap;
+			z-index: 1000;
+		}
+
+		.contextmenu__item:hover {
+			cursor: pointer;
+			background: #66b1ff;
+			border-color: #66b1ff;
+			color: #fff;
+		}
 	}
 </style>
 
 <style>
-	.contextmenu__item {
-		display: block;
-		line-height: 34px;
-		text-align: center;
-	}
-
-	.contextmenu__item:not(:last-child) {
-		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-	}
-
-	.menu {
-		position: absolute;
-		background-color: #fff;
-		/*height: 106px;*/
-		font-size: 12px;
-		color: #444040;
-		border-radius: 4px;
-		-webkit-box-sizing: border-box;
-		box-sizing: border-box;
-		border-radius: 3px;
-		border: 1px solid rgba(0, 0, 0, 0.15);
-		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-		white-space: nowrap;
-		z-index: 1000;
-	}
-
-	.contextmenu__item:hover {
-		cursor: pointer;
-		background: #66b1ff;
-		border-color: #66b1ff;
-		color: #fff;
-	}
 </style>
 
 <template>
@@ -469,7 +470,7 @@
 
 				// 根据事件对象中鼠标点击的位置，进行定位
 				menu.style.left = event.clientX + "px";
-				menu.style.top = event.clientY + "px";
+				menu.style.top = (event.clientY + window.pageYOffset) + "px";
 				// 改变自定义菜单的隐藏与显示
 				menu.style.display = "block";
 				// 获取当前右键点击table下标
