@@ -40,7 +40,8 @@
 				</div>
 			</div>
 			<div class="row-right">
-				<i class="el-icon-s-tools" @click="setVisible = true" />
+				<i class="el-icon-wallet" @click="onShowUser()"></i>
+				<i class="el-icon-s-tools" @click="setVisible = true"></i>
 			</div>
 		</div>
 		<el-row :gutter="5">
@@ -63,9 +64,10 @@
 			</el-col>
 		</el-row>
 
+		<!-- 交易设置 -->
 		<el-dialog title="交易设置" :visible.sync="setVisible" width="60%" v-dialogDrag>
 			<template>
-				<div class="setting">
+				<div class="template_main">
 					<el-tabs tab-position="left" style="height: 200px">
 						<el-tab-pane label="基本">
 							<div class="setting-main">
@@ -145,10 +147,138 @@
 				</div>
 			</template>
 		</el-dialog>
+
+
+		<!-- 资金明细 -->
+		<el-dialog title="账户资金明细" :visible.sync="userVisible" width="75%" v-dialogDrag>
+			<template>
+				<div class="template_main" style="margin: 0 30px;">
+					<div class="user_btns">
+						<el-form :inline="true" :model="form">
+							<el-form-item label="账户:">
+								<el-select v-model="form.account" placeholder="选择账户" style="width: 115px;">
+									<el-option v-for="item in myAccount" :key="item.id" :label="item.id"
+										:value="item.account">
+									</el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="账户名称:">
+								<el-input v-model="form.name" style="width: 115px;" disabled />
+							</el-form-item>
+							<el-form-item label="代表币种:">
+								<el-select v-model="form.type" placeholder="选择类型" style="width: 115px;">
+									<el-option v-for="item in coinType" :key="item" :label="item" :value="item">
+									</el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="币种组:">
+								<el-select v-model="form.group" placeholder="选择类型" style="width: 115px;">
+									<el-option v-for="item in coinGroup" :key="item" :label="item" :value="item">
+									</el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary">查询</el-button>
+								<el-button type="primary">导出</el-button>
+							</el-form-item>
+						</el-form>
+					</div>
+					<el-descriptions border>
+						<el-descriptions-item label='可用资金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='风险度'>10000000</el-descriptions-item>
+						<el-descriptions-item label='期初现金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='权益'>10000000</el-descriptions-item>
+						<el-descriptions-item label='持仓盈亏'>10000000</el-descriptions-item>
+						<el-descriptions-item label='额度'>10000000</el-descriptions-item>
+						<el-descriptions-item label='账户市值'>10000000</el-descriptions-item>
+						<el-descriptions-item label='平仓盈亏'>10000000</el-descriptions-item>
+						<el-descriptions-item label='押金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='出入金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='平仓未到期盈亏'>10000000</el-descriptions-item>
+						<el-descriptions-item label='特殊保证金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='权利金'>10000000</el-descriptions-item>
+						<el-descriptions-item label='挂单权利金'>0</el-descriptions-item>
+						<el-descriptions-item label='追加保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='初始保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='挂单保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='持仓保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='维持保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='挂单维持保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='持仓维持保证金'>0</el-descriptions-item>
+						<el-descriptions-item label='期权持仓市值'>0</el-descriptions-item>
+						<el-descriptions-item label='期权多头持仓市值'>0</el-descriptions-item>
+						<el-descriptions-item label='期权空头持仓市值'>0</el-descriptions-item>
+						<el-descriptions-item label='手续费'>0</el-descriptions-item>
+						<el-descriptions-item label='挂单手续费'>0</el-descriptions-item>
+						<el-descriptions-item label='兑基币汇率'>0</el-descriptions-item>
+					</el-descriptions>
+					<div class="user_m_tip">
+						<div class="tip">
+							<span>资金栏相关展示数据【代表币种：USD(Base)，币种组：All】</span>
+							<el-button type="primary" @click='setUserDataVisible = true'>设置</el-button>
+						</div>
+						<div class="tip_list">
+							<div class="tip_group_item" v-for="item in default_show" v-bind:key="item">
+								{{ item }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</template>
+		</el-dialog>
+
+		<!-- 设置资金栏数据 -->
+		<el-dialog title="设置资金栏数据" :visible.sync="setUserDataVisible" width="626px" v-dialogDrag>
+			<template>
+				<div class="template_main">
+					<el-checkbox-group v-model="checkList" :max="5" :min="1">
+						<el-row>
+							<el-col :span="8"><el-checkbox label='期初现金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='持仓保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='手续费'></el-checkbox></el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="8"><el-checkbox label='额度'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='挂单维持保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='挂单手续费'></el-checkbox></el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="8"><el-checkbox label='权益'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='持仓维持保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='兑基币汇率'></el-checkbox></el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="8"><el-checkbox label='可用资金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='追加保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='初始保证金'></el-checkbox></el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="8"><el-checkbox label='出入金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='维持保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='风险度'></el-checkbox></el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="8"><el-checkbox label='挂单保证金'></el-checkbox></el-col>
+							<el-col :span="8"><el-checkbox label='盈亏'></el-checkbox></el-col>
+							<el-col :span="8"></el-col>
+						</el-row>
+					</el-checkbox-group>
+					<div class="sud_tip">
+						提示：最多只能选择五个数据
+					</div>
+					<div class="sud_btn">
+						<el-button type="primary" @click="setUserDataSubmit()">确定</el-button>
+						<el-button>取消</el-button>
+					</div>
+				</div>
+			</template>
+		</el-dialog>
+
 	</div>
 </template>
 
 <script>
+	import Sortable from "sortablejs";
 	import SelfSwap from "@/components/swap/self_swap";
 	import SelfSwapM from "@/components/swap/self_swap_m";
 	import Order from "@/components/swap/order";
@@ -180,19 +310,60 @@
 					orderType: "",
 					reOrderType: "",
 				},
+				form: {
+					account: '',
+					type: '',
+					group: '',
+					name: '',
+				},
+				default_show: ['权益', '保证金', '可用资金'],
+				checkList: [], //最多五项
 				price: [100, 200, 300],
 				setVisible: false,
+				userVisible: false,
+				setUserDataVisible: false,
 				split1: 0.5,
 				selectedOrder: "self",
 				showDetail: true,
 				account: '',
 				myAccount: [],
+				coinType: ['1'],
+				coinGroup: ['2'],
 			};
 		},
 		mounted() {
 			this.init();
 		},
 		methods: {
+			//拖拽方法
+			updated() {
+				setTimeout(function() {
+					const tbody = document.querySelector(".tip_list");
+					const that = this;
+					Sortable.create(tbody, {
+						onEnd({
+							newIndex,
+							oldIndex
+						}) {
+							if (newIndex != oldIndex) {
+								const currRow = that.default_show.splice(oldIndex, 1)[0];
+								that.default_show.splice(newIndex, 0, currRow);
+							}
+						},
+					});
+				}, 500);
+			},
+
+			onShowUser() {
+				this.userVisible = true;
+				this.updated();
+			},
+			
+			//设置资金栏数据
+			setUserDataSubmit() {
+				console.log(this.checkList);
+			},
+
 			init() {
 				this.account = this.$store.state.user.account;
 				this.myAccount = this.$store.state.user.accounts;
@@ -276,6 +447,7 @@
 
 <style lang="less">
 	@import "../../style/col";
+
 	html body .swap_o {
 		height: 100%;
 		background-color: #323337;
@@ -364,7 +536,11 @@
 			}
 
 			.row-right {
-				margin-right: 20px;
+				margin-right: 10px;
+
+				i {
+					padding: 0 10px;
+				}
 			}
 
 			.row-line {
@@ -396,7 +572,7 @@
 			top: 15px;
 		}
 
-		.setting {
+		.template_main {
 			color: #fff;
 
 			.setting-main {
@@ -435,8 +611,8 @@
 				color: #409eff;
 			}
 
-			.el-input--suffix .el-input__inner {
-				background-color: #1c1d21;
+			.el-input__inner {
+				background-color: #1c1d21 !important;
 				color: #fff !important;
 				height: 30px;
 				border: 1px solid #797979 !important;
@@ -479,6 +655,105 @@
 				width: 25px;
 				line-height: 30px;
 			}
+
+			.user_btns {
+				overflow: hidden;
+				white-space: nowrap;
+				margin-bottom: 10px;
+			}
+
+			.el-form-item__label {
+				color: #fff;
+			}
+
+			.el-button {
+				padding: 6px 20px;
+			}
+
+			.el-descriptions__body {}
+
+			.el-descriptions-item__content {
+				background-color: #1C1D21;
+				color: #fff;
+				padding: 6px 20px;
+				border: none;
+				border-right: 1px solid #797979;
+				border-bottom: 1px solid #797979;
+			}
+
+			.el-descriptions-item__content:nth-child(3n) {
+				background-color: #1C1D21;
+				color: #fff;
+				padding: 6px 20px;
+				border: none;
+				border-bottom: 1px solid #797979;
+			}
+
+			.el-descriptions-item__label.is-bordered-label {
+				background-color: #1C1D21;
+				color: #fff;
+				padding: 6px 20px;
+				border: none;
+				border-right: 1px solid #797979;
+				border-bottom: 1px solid #797979;
+			}
+			
+			.el-checkbox__label {
+				color: #fff;
+			}
+			
+			.el-row{
+				display: flex;
+				justify-content: space-around;
+			}
+			
+			.sud_tip {
+				margin: 20px 0;
+			}
+			
+			.sud_btn {
+				text-align: right;
+			}
+			
+			
+			.user_m_tip {
+				margin-top: 25px;
+
+				.tip {
+					display: flex;
+					justify-content: space-between;
+					margin-bottom: 25px;
+				}
+
+				.tip_list {
+					border: 1px solid #797979;
+					height: 100px;
+					display: flex;
+
+					.tip_group_item {
+						width: auto;
+						height: 28px;
+						padding: 2px 5px;
+						margin: 10px 5px;
+						font-size: 12px;
+						border: 1px solid #797979;
+					}
+
+					.tip_group_item.active {
+						color: #ffffff;
+						background-color: #174b94c9;
+						border: 1px solid #174b94;
+					}
+
+					.tip_group_item:hover {
+						cursor: pointer;
+						color: #ffffff;
+						background-color: #174b94c9;
+						border: 1px solid #174b94;
+					}
+				}
+			}
+
 		}
 	}
 </style>

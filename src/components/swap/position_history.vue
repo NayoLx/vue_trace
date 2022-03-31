@@ -85,7 +85,7 @@
 			<div class="title">
 				<span>成交记录</span>
 			</div>
-			<span @click="check_more">查看更多</span>
+			<span @click="check_more" style="cursor: pointer;">查看更多</span>
 		</div>
 
 		<el-table height="250" row-key="id" :data="tableData"

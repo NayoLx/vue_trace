@@ -254,7 +254,6 @@
 			this.init();
 		},
 		mounted() {
-			this.init();
 			this.rowDrop();
 			this.updated();
 		},
@@ -268,9 +267,11 @@
 						newIndex,
 						oldIndex
 					}) {
-						const currRow = that.swapGroup.splice(oldIndex, 1)[0];
-						that.swapGroup.splice(newIndex, 0, currRow);
-						that.sortSwapGroup();
+						if (newIndex != oldIndex) {
+							const currRow = that.swapGroup.splice(oldIndex, 1)[0];
+							that.swapGroup.splice(newIndex, 0, currRow);
+							that.sortSwapGroup();
+						}
 					},
 				});
 			},
