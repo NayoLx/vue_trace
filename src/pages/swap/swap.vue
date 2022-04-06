@@ -5,9 +5,9 @@
 				<el-tab-pane label="报价表" name="self">
 					<SelfSwap :user="account"></SelfSwap>
 				</el-tab-pane>
-				<el-tab-pane label="期权报价表" name="s_self">
+				<!-- <el-tab-pane label="期权报价表" name="s_self">
 					<SelfSwapM :user="account"></SelfSwapM>
-				</el-tab-pane>
+				</el-tab-pane> -->
 			</el-tabs>
 		</div>
 		<div class="row">
@@ -45,13 +45,13 @@
 			</div>
 		</div>
 		<el-row :gutter="5">
-			<el-col :xs="4" :sm="4" :md="3" :lg="3" :xl="2">
+			<el-col :xs="4" :sm="4" :md="3" :lg="3" :xl="3">
 				<DiskPort :user="account"></DiskPort>
 			</el-col>
 			<el-col :xs="9" :sm="9" :md="7" :lg="6" :xl="5">
 				<Order :user="account"></Order>
 			</el-col>
-			<el-col :xs="11" :sm="11" :md="14" :lg="15" :xl="17">
+			<el-col :xs="11" :sm="11" :md="14" :lg="15" :xl="16">
 				<Entrust :user="account"></Entrust>
 			</el-col>
 		</el-row>
@@ -280,7 +280,6 @@
 <script>
 	import Sortable from "sortablejs";
 	import SelfSwap from "@/components/swap/self_swap";
-	import SelfSwapM from "@/components/swap/self_swap_m";
 	import Order from "@/components/swap/order";
 	import DiskPort from "@/components/swap/disk_port";
 	import Position from "@/components/swap/position";
@@ -294,7 +293,6 @@
 	export default {
 		components: {
 			SelfSwap,
-			SelfSwapM,
 			Order,
 			PositionH,
 			Position,
