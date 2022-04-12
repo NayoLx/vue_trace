@@ -72,6 +72,7 @@
 				background-color: #1c1d21;
 				color: #fff !important;
 				height: 30px;
+				line-height: 30px;
 				border: 1px solid #797979 !important;
 			}
 		}
